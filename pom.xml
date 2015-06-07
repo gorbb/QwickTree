@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>uk.co.gorbb</groupId>
-	<artifactId>QwickTree</artifactId>
+	<artifactId>qwicktree</artifactId>
 	<version>2.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
@@ -20,6 +20,10 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
+		<repository>
+			<id>repo</id>
+			<url>file://${project.basedir}/repo</url>
+		</repository>
 	</repositories>
 	
 	<dependencies>
@@ -33,12 +37,17 @@
 			<artifactId>bukkit</artifactId>
 			<version>1.8.3-R0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>net.coreprotect</groupId>
+			<artifactId>coreprotect</artifactId>
+			<version>2.11.1</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
 		<finalName>QwickTree</finalName>
-		<directory>${basedir}/../Build/${version}/</directory>
 		<sourceDirectory>src/main/java</sourceDirectory>
+		<directory>${basedir}/../Build/${version}/</directory>
 		<resources>
 			<resource>
 				<targetPath>.</targetPath>
@@ -46,6 +55,7 @@
 				<directory>${basedir}/src/main/resources/</directory>
 				<includes>
 					<include>plugin.yml</include>
+					<include>config.yml</include>
 				</includes>
 			</resource>
 		</resources>

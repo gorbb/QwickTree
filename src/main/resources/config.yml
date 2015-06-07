@@ -1,0 +1,128 @@
+items:
+ - STONE_AXE
+ - IRON_AXE
+ - GOLD_AXE
+ - DIAMOND_AXE
+house:
+ - GLASS
+ - THIN_GLASS
+ - IRON_FENCE
+ - WOODEN_DOOR
+ - IRON_DOOR_BLOCK
+ - SPRUCE_DOOR
+ - BIRCH_DOOR
+ - JUNGLE_DOOR
+ - ACACIA_DOOR
+ - DARK_OAK_DOOR
+
+usePerms: true
+
+creative:
+ autoCollect: true
+ replant: true
+ damage: false
+
+trees:
+ oak:
+  enabled: true
+  replant: true
+  autoCollect: false
+  leaf:
+   reach: 2
+   groundOffset: 0
+   min: 10
+  log:
+   min: 4
+   max: 40
+  drops:
+   - LEAVES,0.01
+   - SAPLING,0.025
+   - APPLE,0.005
+  damage:
+   type: NORM
+   amount: 1
+ birch:
+  enabled: true
+  replant: true
+  autoCollect: false
+  leaf:
+   reach: 2
+   groundOffset: 0
+   min: 10
+  log:
+   min: 4
+   max: 80
+  drops:
+   - LEAVES,0.01
+   - SAPLING,0.025
+  damage:
+   type: NORM
+   amount: 1
+ pine:
+  enabled: true
+  replant: true
+  autoCollect: false
+  leaf:
+   reach: 2
+   groundOffset: 0
+   min: 10
+  log:
+   min: 4
+   max: 200
+  drops:
+   - LEAVES,0.01
+   - SAPLING,0.025
+  damage:
+   type: NORM
+   amount: 1
+ jungle:
+  enabled: true
+  replant: true
+  autoCollect: false
+  leaf:
+   reach: 2
+   groundOffset: 0
+   min: 10
+  log:
+   min: 4
+   max: 200
+  drops:
+   - LEAVES,0.01
+   - SAPLING,0.025
+  damage:
+   type: NORM
+   amount: 1
+ acacia:
+  enabled: true
+  replant: true
+  autoCollect: false
+  leaf:
+   reach: 2
+   groundOffset: 0
+   min: 10
+  log:
+   min: 4
+   max: 20
+  drops:
+   - LEAVES,0.01
+   - SAPLING,0.025
+  damage:
+   type: NORM
+   amount: 1
+ dark_oak:
+  enabled: true
+  replant: true
+  autoCollect: false
+  leaf:
+   reach: 2
+   groundOffset: 0
+   min: 10
+  log:
+   min: 4
+   max: 200
+  drops:
+   - LEAVES,0.01
+   - SAPLING,0.025
+  damage:
+   type: NORM
+   amount: 1

@@ -6,4 +6,39 @@ description: ${project.description}
 author: gorbb
 website: ${project.url}
 
-# I'll do commands later
+softdepend: [CoreProtect]
+
+commands:
+ qt:
+  description: QwickTree admin/debug command
+  aliases: [qwicktree]
+  usage: Try /<command> for help.
+
+permissions:
+ qwicktree.*:
+  description: Gives complete access to QwickTree
+  children:
+   qwicktree.chop: true
+   qwicktree.notify: true
+   qwicktree.debug: true
+   qwicktree.reload: true
+   qwicktree.info: true
+   qwicktree.bypass: true
+  qwicktree.chop:
+   description: Allows players to use QwickTree to chop down trees
+   default: true
+  qwicktree.notify:
+   description: Lets players get a notification if a 'house' block is detected near a tree.
+   default: op
+  qwicktree.debug:
+   description: Allows a player access to the debugger
+   default: op
+  qwicktree.reload:
+   description: Allows a player to reload the config
+   default: op
+  qwicktree.info:
+   description: Allows a player to view information on the trees chopped since the last reload.
+   default: op
+  qwicktree.bypass:
+   description: Allows a player to add bypasses from the 'house' blocks for any player.
+   defualt: op
