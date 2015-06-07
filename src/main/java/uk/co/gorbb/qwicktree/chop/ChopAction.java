@@ -22,6 +22,7 @@ import uk.co.gorbb.qwicktree.QwickTree;
 import uk.co.gorbb.qwicktree.config.Config;
 import uk.co.gorbb.qwicktree.tree.TreeInfo;
 import uk.co.gorbb.qwicktree.tree.info.TreeType;
+import uk.co.gorbb.qwicktree.util.HouseIgnore;
 import uk.co.gorbb.qwicktree.util.Logging;
 import uk.co.gorbb.qwicktree.util.Message;
 import uk.co.gorbb.qwicktree.util.Permission;
@@ -126,7 +127,7 @@ public class ChopAction {
 						Block block = log.getRelative(x, y, z);
 						
 						if (!ignoreHouseBlocks && Config.get().isHouseBlock(block))
-							if (QwickTree.get().ignoreHouseBlocks(player))
+							if (HouseIgnore.get().ignoreHouseBlocks(player))
 								ignoreHouseBlocks = true;
 							else {
 								Message.NOTIFY.send(Permission.NOTIFY, player.getName(), formatLocation(block.getLocation()));

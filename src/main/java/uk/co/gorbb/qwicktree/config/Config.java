@@ -48,10 +48,11 @@ public class Config {
 		houseBlock = toMaterialList(config.getStringList("house"));
 		handItems = toMaterialList(config.getStringList("items"));
 		
-		if (config.getBoolean("usePerms"))
-			Permission.NOTIFY.setDefault(false);
-		else
-			Permission.NOTIFY.setDefault(true);
+		if (config.getBoolean("usePerms"))   Permission.NOTIFY.setDefault(false);
+										else Permission.NOTIFY.setDefault(true);
+		
+		if (config.getBoolean("allowSelfToggle"))	 Permission.TOGGLE_SELF.setDefault(true);
+												else Permission.TOGGLE_SELF.setOp(true);
 		
 		creativeAutoCollect = config.getBoolean("creative.autoCollect");
 		creativeReplant = config.getBoolean("creative.replant");
@@ -126,6 +127,8 @@ public class Config {
 	}
 	
 	public boolean isHandItem(ItemStack item) {
+		if (handItems.isEmpty()) return true;
+		
 		return handItems.contains(item.getType());
 	}
 	

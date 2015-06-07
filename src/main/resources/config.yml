@@ -15,6 +15,7 @@ house:
  - ACACIA_DOOR
  - DARK_OAK_DOOR
 
+allowSelfToggle: false
 usePerms: true
 
 creative:

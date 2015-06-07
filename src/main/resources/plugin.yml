@@ -24,6 +24,13 @@ permissions:
    qwicktree.reload: true
    qwicktree.info: true
    qwicktree.bypass: true
+   qwicktree.toggle.*: true
+  qwicktree.toggle.*:
+   children:
+    qwicktree.toggle.self: true
+    qwicktree.toggle.others: true
+    qwicktree.toggle.all: true
+    qwicktree.toggle.list: true
   qwicktree.chop:
    description: Allows players to use QwickTree to chop down trees
    default: true
@@ -42,3 +49,15 @@ permissions:
   qwicktree.bypass:
    description: Allows a player to add bypasses from the 'house' blocks for any player.
    defualt: op
+  qwicktree.toggle.self:
+   description: Allows a player to toggle the plugin enabled or disabled for themselves.
+   default: op
+  qwicktree.toggle.others:
+   description: Allows a player to toggle the plugin enabled or disabled for any other players on the server. This permission implies qwicktree.toggle.self
+   default: op
+  qwicktree.toggle.all:
+   description: Allows the player to globally enable or disable the plugin for every player on the server.
+   default: op
+  qwicktree.toggle.list:
+   description: Lets the player see and clear the list of players for who the plugin is disabled for.
+   default: op

@@ -6,13 +6,14 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /** SLAPI = Saving/Loading API
  * API for Saving and Loading Objects.
  * @author Tomsik68
  */
-public class SLAPI
-{
+public class SLAPI {
 	public static void save(Object obj,String path) throws Exception {
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
 		oos.writeObject(obj);
@@ -26,6 +27,8 @@ public class SLAPI
 		ois.close();
 		return result;
 	}
+	
+	/* ### WRAPPER FUNCTIONS ### */
 	
 	@SuppressWarnings("unchecked")
 	public static HashMap<String, Integer> loadIgnoreList(File folder, String file) {
@@ -44,6 +47,27 @@ public class SLAPI
 		
 		try {
 			save(ignoreList, path.getAbsolutePath());
+		}
+		catch (Exception e) { }
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<String> loadDisabledList(File folder, String file) {
+		File path = new File(folder, file);
+		
+		try {
+			return (List<String>) load(path.getAbsolutePath());
+		}
+		catch (Exception e) {
+			return new LinkedList<String>();
+		}
+	}
+	
+	public static void saveDisabledList(File folder, String file, List<String> disabledList) {
+		File path = new File(folder, file);
+		
+		try {
+			save(disabledList, path.getAbsolutePath());
 		}
 		catch (Exception e) { }
 	}

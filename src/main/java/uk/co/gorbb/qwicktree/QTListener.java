@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import uk.co.gorbb.qwicktree.chop.ChopAction;
 import uk.co.gorbb.qwicktree.config.Config;
 import uk.co.gorbb.qwicktree.tree.TreeInfo;
+import uk.co.gorbb.qwicktree.util.DisabledList;
 import uk.co.gorbb.qwicktree.util.Permission;
 import uk.co.gorbb.qwicktree.util.debug.Debugger;
 
@@ -22,43 +23,52 @@ public class QTListener implements Listener {
 		Player player = event.getPlayer();
 		Debugger debugger = Debugger.get(player);
 		
-		debugger.addStage("QTL.b"); //1
+		blockEvent(debugger, player, block);
+		
+		debugger.outputDebugger();
+	}
+	
+	private void blockEvent(Debugger debugger, Player player, Block block) {
+		debugger.addStage("QTL.blockEvent"); //1
 		//Cheaper to check the player first
-		if (!canChop(player)) return;
+		if (!canChop(debugger, player)) return;
 
-		debugger.addStage("QTL.b"); //2
+		debugger.addStage("QTL.blockEvent"); //2
 		//Make sure the tree exists
 		TreeInfo tree = Config.get().getTreeByLog(block);
 		if (tree == null) return;
 
-		debugger.addStage("QTL.b"); //3
+		debugger.addStage("QTL.blockEvent"); //3
 		//Tree should be enabled
 		if (!tree.isEnabled()) return;
 
-		debugger.addStage("QTL.b"); //4
+		debugger.addStage("QTL.blockEvent"); //4
 		//Tree has to be on the ground
 		if (!tree.isValidStandingBlock(block.getRelative(BlockFace.DOWN))) return;
 
-		debugger.addStage("QTL.b"); //5
+		debugger.addStage("QTL.blockEvent"); //5
 		//Okay then, chop!
 		ChopAction chop = new ChopAction(player, tree, block);
 		
 		chop.go();
 
-		debugger.addStage("QTL.b"); //6
-		Debugger.get(player).outputDebugger();
+		debugger.addStage("QTL.blockEvent"); //6
 	}
 	
-	private boolean canChop(Player player) {
+	private boolean canChop(Debugger debugger, Player player) {
+		debugger.addStage("QTL.canChop"); //1
 		//Player needs to have one of the 'items' in their hand.
 		if (!Config.get().isHandItem(player.getItemInHand())) return false;
 		
+		debugger.addStage("QTL.canChop"); //2
 		//Check player has permission
 		if (!Permission.USE.has(player)) return false;
 		
+		debugger.addStage("QTL.canChop"); //3
 		//Check plugin is enabled for player
+		if (DisabledList.get().isDisabledFor(player)) return false;
 		
-		
+		debugger.addStage("QTL.canChop"); //4
 		return true;
 	}
 	
