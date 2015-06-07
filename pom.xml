@@ -15,6 +15,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	
+	<scm>
+		<url>https://bitbucket.org/adaniels4/qwicktree</url>
+	</scm>
+	
+	<issueManagement>
+		<system>BukkitDev Ticket System</system>
+		<url>http://dev.bukkit.org/bukkit-plugins/qwicktree/tickets/</url>
+	</issueManagement>
+	
 	<repositories>
 		<repository>
 			<id>spigot-repo</id>
@@ -47,7 +56,7 @@
 	<build>
 		<finalName>QwickTree</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<directory>${basedir}/../Build/${version}/</directory>
+		<directory>${basedir}/../Builds/${name}/${version}/</directory>
 		<resources>
 			<resource>
 				<targetPath>.</targetPath>
