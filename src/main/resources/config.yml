@@ -63,9 +63,9 @@ trees:
   replant: true
   autoCollect: false
   leaf:
-   reach: 2
+   reach: 3
    groundOffset: 0
-   min: 10
+   min: 8
   log:
    min: 4
    max: 200
