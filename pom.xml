@@ -30,6 +30,10 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
+			<id>Plugin Metrics</id>
+			<url>http://repo.mcstats.org/content/repositories/public</url>
+		</repository>
+		<repository>
 			<id>repo</id>
 			<url>file://${project.basedir}/repo</url>
 		</repository>
@@ -51,9 +55,55 @@
 			<artifactId>coreprotect</artifactId>
 			<version>2.11.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mcstats.bukkit</groupId>
+			<artifactId>metrics</artifactId>
+			<version>R7</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	
 	<build>
+		<plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>org.mcstats.*:*</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.mcstats</pattern>
+                            <shadedPattern>uk.co.gorbb.qwicktree.metrics</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+		
 		<finalName>QwickTree</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<directory>${basedir}/../Builds/${name}/${version}/</directory>

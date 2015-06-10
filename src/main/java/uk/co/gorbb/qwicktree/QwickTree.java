@@ -1,8 +1,10 @@
 package uk.co.gorbb.qwicktree;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
 
 import uk.co.gorbb.qwicktree.config.Config;
 import uk.co.gorbb.qwicktree.tree.info.TreeType;
@@ -38,6 +40,8 @@ public class QwickTree extends JavaPlugin {
 		
 		//Check for loaded logging plugins
 		Logging.checkPlugins();
+		
+		doMetrics();
 	}
 	
 	@Override
@@ -58,5 +62,15 @@ public class QwickTree extends JavaPlugin {
 	
 	public HashMap<TreeType, Integer> getChopCount() {
 		return new HashMap<TreeType, Integer>(chopCount);
+	}
+	
+	private void doMetrics() {
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+		}
+		catch (IOException e) {
+			
+		}
 	}
 }
