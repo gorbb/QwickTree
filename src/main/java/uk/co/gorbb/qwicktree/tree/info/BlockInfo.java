@@ -27,6 +27,15 @@ public class BlockInfo {
 	}
 	
 	@SuppressWarnings("deprecation")
+	public boolean matches(Block block, int mod) {
+		return block.getType() == material && matchesData(block.getData(), mod);
+	}
+	
+	public boolean matchesData(byte data, int mod) {
+		return this.data % mod == data;
+	}
+	
+	@SuppressWarnings("deprecation")
 	public ItemStack toItemStack(int qty) {
 		return new ItemStack(material, qty, (short) 0, data);
 	}

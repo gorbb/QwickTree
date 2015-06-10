@@ -20,7 +20,7 @@ public class QTCommand implements CommandExecutor {
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length == 0)
-			helpCommand(sender);
+			return helpCommand(sender);
 
 		if (args[0].equalsIgnoreCase("help"))		return helpCommand(sender);
 		if (args[0].equalsIgnoreCase("debug"))		return debugCommand(sender);

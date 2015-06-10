@@ -30,12 +30,12 @@ public class NewTree extends StandardTree {
 
 	@Override
 	public boolean isValidLog(Block block) {
-		return logBlock.matches(block);
+		return logBlock.matches(block, 4);
 	}
 
 	@Override
 	public boolean isValidLeaf(Block block) {
-		return leafBlock.matches(block);
+		return leafBlock.matches(block, 4);
 	}
 
 	@Override
