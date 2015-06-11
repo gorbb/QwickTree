@@ -35,7 +35,7 @@ trees:
    min: 10
   log:
    min: 4
-   max: 40
+   max: 50
   drops:
    - LEAVES,0.01
    - SAPLING,0.025
@@ -116,7 +116,7 @@ trees:
   replant: true
   autoCollect: false
   leaf:
-   reach: 2
+   reach: 3
    groundOffset: 0
    min: 10
   log:
@@ -125,6 +125,7 @@ trees:
   drops:
    - LEAVES,0.01
    - SAPLING,0.025
+   - APPLE,0.005
   damage:
    type: NORM
    amount: 1
