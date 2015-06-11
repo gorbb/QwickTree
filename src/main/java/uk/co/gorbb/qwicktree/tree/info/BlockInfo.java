@@ -32,7 +32,7 @@ public class BlockInfo {
 	}
 	
 	public boolean matchesData(byte data, int mod) {
-		return this.data % mod == data;
+		return data % mod == this.data;
 	}
 	
 	@SuppressWarnings("deprecation")

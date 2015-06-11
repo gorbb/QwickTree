@@ -26,7 +26,7 @@ public abstract class TreeInfo {
 	private int							logMin,				//Minimum number of logs required for the tree to be valid.
 										logMax;				//Maximum number of logs allowed in a valid tree. If any more logs are found, the tree is not valid.
 	
-	private HashMap<Material, Double>	drops;				//Which items to drop when the tree is chopped.
+	private HashMap<Double, Material>	drops;				//Which items to drop when the tree is chopped.
 	
 	private DamageType					damageType;			//Which type of damage to deal to a damagable item when the tree is chopped.
 	private int							damageAmount;		//The multiplier or amount of damage to deal, depending on the damage type.
@@ -52,14 +52,14 @@ public abstract class TreeInfo {
 		this.damageAmount = damageAmount;
 	}
 	
-	private HashMap<Material, Double> processDrops(List<String> drops) {
-		HashMap<Material, Double> newDrops = new HashMap<Material, Double>();
+	private HashMap<Double, Material> processDrops(List<String> drops) {
+		HashMap<Double, Material> newDrops = new HashMap<Double, Material>();
+		double chance = 0;
 		
 		for (String row: drops) {
 			String[] data = row.split(",");
 			
 			Material material = Material.getMaterial(data[0]);
-			Double chance;
 			
 			if (material == null) {
 				Message.MATERIAL_CONVERT_ERROR.warn(data[0]);
@@ -67,15 +67,16 @@ public abstract class TreeInfo {
 			}
 			
 			try {
-				chance = Double.parseDouble(data[1]);
+				chance += Double.parseDouble(data[1]);
 			}
 			catch (NumberFormatException e) {
 				Message.CHANCE_CONVERT_ERROR.warn(data[1], material.toString());
 				continue; //Skip if chance not valid
 			}
 			
-			newDrops.put(material, chance);
+			newDrops.put(chance, material);
 		}
+		newDrops.put(1.0, null);
 		
 		return newDrops;
 	}
@@ -116,7 +117,7 @@ public abstract class TreeInfo {
 		return logMax;
 	}
 	
-	public HashMap<Material, Double> getDrops() {
+	public HashMap<Double, Material> getDrops() {
 		return drops;
 	}
 	

@@ -106,6 +106,8 @@ public class ChopAction {
 	}
 	
 	private void chop() {
+		QwickTree.get().addTreeChop(tree.getType());
+		
 		//Break all of the leaves and vines
 		debugger.addStage("CA.chop"); //1
 		for (Block leaf: leaves)
@@ -191,7 +193,7 @@ public class ChopAction {
 				for (int y = 0; y <= 1; y++) {
 					Block block = current.getRelative(x, y, z);
 					
-					if (!tree.isValidStandingBlock(block) ||	//If it's not a valid log...
+					if (!tree.isValidLog(block) ||				//If it's not a valid log...
 							logsToSearch.contains(block) ||		//...or is already set to search around...
 							logs.contains(block) ||				//...or has already been searched around...
 							current.equals(block))				//...or is the current one...
@@ -243,6 +245,9 @@ public class ChopAction {
 	
 	
 	private boolean checkSize() {
+		debugger.setStage("Log Size", logs.size());
+		debugger.setStage("Leaf Size", leaves.size());
+		
 		if (logs.size() < tree.getLogMin()) return false;
 		if (logs.size() > tree.getLogMax()) return false;
 		
@@ -378,14 +383,14 @@ public class ChopAction {
 	}
 	
 	private Material getRandomDrop() {
-		HashMap<Material, Double> dropChances = tree.getDrops();
+		HashMap<Double, Material> dropChances = tree.getDrops();
 		double number = rnd.nextDouble();
 		Material selected = null;
 		
-		for (Material dropMaterial: dropChances.keySet()) {
-			selected = dropMaterial;
+		for (double dropChance: dropChances.keySet()) {
+			selected = dropChances.get(dropChance);
 			
-			if (number <= dropChances.get(dropMaterial)) break;
+			if (number <= dropChance) break;
 		}
 		
 		return selected;
