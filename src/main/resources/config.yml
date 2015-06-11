@@ -17,6 +17,7 @@ house:
 
 allowSelfToggle: false
 usePerms: true
+groupDrops: true
 
 creative:
  autoCollect: true

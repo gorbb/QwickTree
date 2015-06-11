@@ -1,6 +1,7 @@
 package uk.co.gorbb.qwicktree.chop;
 
-import java.util.EnumSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,19 +32,20 @@ import uk.co.gorbb.qwicktree.util.debug.Debugger;
 public class ChopAction {
 	private Player player;
 	private TreeInfo tree;
-	private Stack<Block> logsToSearch;
 	
-	private List<Block> logs;
-	private List<Block> leaves;
-	private List<Location> baseBlocks; 
-	private List<Location> vines;
+	private Stack<Block> logsToSearch;
+	private List<Location> baseBlocks;
+	
+	private List<Block> logs,
+						leaves,
+						vines;
 	
 	private Random rnd;
 	
-	private boolean ignoreHouseBlocks = false;
+	private boolean ignoreHouseBlocks;
 	private Debugger debugger;
 	
-	public ChopAction(Player player, TreeInfo tree, Block base) {
+	public ChopAction(Player player, TreeInfo tree, Block baseBlock) {
 		this.player = player;
 		this.tree = tree;
 		
@@ -51,261 +53,210 @@ public class ChopAction {
 		logs = new LinkedList<Block>();
 		leaves = new LinkedList<Block>();
 		baseBlocks = new LinkedList<Location>();
-		vines = new LinkedList<Location>();
+		vines = new LinkedList<Block>();
 		
 		rnd = new Random();
+		
+		ignoreHouseBlocks = false;
+		
 		debugger = Debugger.get(player);
 		
-		logsToSearch.push(base);
+		logsToSearch.add(baseBlock);
 	}
 	
 	public void go() {
-		if (check())
-			if (chop())
-				replant();
+		debugger.addStage("CA.go"); //1
+		//Check
+		if (!check()) return;
+
+		debugger.addStage("CA.go"); //2
+		//Damage
+		if (!damage()) return;
+
+		debugger.addStage("CA.go"); //3
+		//Chop
+		chop();
+
+		debugger.addStage("CA.go"); //4
+		//Replant
+		replant();
+
+		debugger.addStage("CA.go"); //5
 	}
 	
 	private boolean check() {
 		debugger.addStage("CA.check"); //1
+		//Log search
 		if (!logSearch()) return false;
 
 		debugger.addStage("CA.check"); //2
+		//Leaf/other search
 		if (!leafSearch()) return false;
 
 		debugger.addStage("CA.check"); //3
-		if (logs.size() < tree.getLogMin()) return false;
+		//Size check
+		if (!checkSize()) return false;
 
 		debugger.addStage("CA.check"); //4
 		return true;
 	}
 	
-	private boolean addLog(Block block) {
-		if (logs.contains(block))
-			return true;
+	private boolean damage() {
+		return doDamage();
+	}
+	
+	private void chop() {
+		//Break all of the leaves and vines
+		debugger.addStage("CA.chop"); //1
+		for (Block leaf: leaves)
+			breakBlock(leaf);
+
+		debugger.addStage("CA.chop"); //2
+		for (Block vine: vines)
+			breakBlock(vine);
+
+		debugger.addStage("CA.chop"); //3
+		//Check if autoCollect
+		if (player.getGameMode() == GameMode.CREATIVE && Config.get().doCreativeAutoCollect()
+				|| tree.doAutoCollect()) {
+			
+			for (Block log: logs)
+				breakBlock(log);
+			
+			dropToInventory();
+		}
+		//Check if groupDrops
+		else if (Config.get().doGroupDrops()) {
+			for (Block log: logs)
+				breakBlock(log);
+			
+			dropToGroup();
+		}
+		//Check normal
+		else {
+			for (Block log: logs)
+				breakBlockNaturally(log);
+			
+			dropToWorld();
+		}
+		debugger.addStage("CA.chop"); //4
+	}
+	
+	private void replant() {
+		//Check if the tree should be replanted, or not..
+		if (player.getGameMode() == GameMode.CREATIVE && !Config.get().doCreativeReplant()
+				|| !tree.doReplant()) return;
 		
-		logs.add(block);
+		TreeReplanter replanter = new TreeReplanter(tree, baseBlocks);
 		
-		if (logs.size() > tree.getLogMax())
-			return false;
+		Bukkit.getScheduler().scheduleSyncDelayedTask(QwickTree.get(), replanter);
+	}
+	
+	/* ### CHECK ### */
+	private boolean logSearch() {
+		while (!logsToSearch.isEmpty()) {
+			//Get the next block to search around
+			Block current = logsToSearch.pop();
+			
+			//Process it...
+			if (!processCurrentLog(current)) return false;
+			
+			//Then search around it.
+			searchCurrentLog(current);
+		}
 		
 		return true;
 	}
 	
-	private boolean logSearch() {
-		while (!logsToSearch.isEmpty()) {
-			Block current = logsToSearch.pop();
-			
-			if (!addLog(current)) return false;
-			
-			if (tree.isValidStandingBlock(current.getRelative(BlockFace.DOWN)))
-				baseBlocks.add(current.getLocation());
-			
-			for (int x = -1; x <= 1; x++)
-				for (int z = -1; z <= 1; z++)
-					for (int y = 0; y <= 1; y++) {
-						Block block = current.getRelative(x, y, z);
-						
-						if (!tree.isValidLog(block)) continue;			//If it's not a valid log, next loop.
-						if (logsToSearch.contains(block)) continue;		//If it's already been found, next loop.
-						if (logs.contains(block)) continue;				//If it's already found, next loop.
-						if (current.equals(block)) continue;			//If it's the block we're searching around, then next loop.
-						
-						logsToSearch.push(block);
-					}
-		}
+	private boolean processCurrentLog(Block block) {
+		//Don't add it if it's already in the list
+		if (logs.contains(block)) return true;
 		
-		return logsToSearch.isEmpty();
+		//Add it to the list
+		logs.add(block);
+		
+		//Check against max tree size
+		if (logs.size() > tree.getLogMax()) return false;
+		
+		//If it's a standing block, then add it to base blocks too
+		if (tree.isValidStandingBlock(block.getRelative(BlockFace.DOWN)))
+			baseBlocks.add(block.getLocation());
+		
+		return true;
 	}
+	
+	private void searchCurrentLog(Block current) {
+		for (int x = -1; x <= 1; x++)
+			for (int z = -1; z <= 1; z++)
+				for (int y = 0; y <= 1; y++) {
+					Block block = current.getRelative(x, y, z);
+					
+					if (!tree.isValidStandingBlock(block) ||	//If it's not a valid log...
+							logsToSearch.contains(block) ||		//...or is already set to search around...
+							logs.contains(block) ||				//...or has already been searched around...
+							current.equals(block))				//...or is the current one...
+						continue;								//...then skip to the next loop.
+					
+					logsToSearch.push(block);
+				}
+	}
+	
 	
 	private boolean leafSearch() {
 		int leafReach = getLeafReach();
 		
-		for (Block log: logs) {
+		for (Block log: logs) //For each log
 			for (int x = -leafReach; x <= leafReach; x++)
 				for (int z = -leafReach; z <= leafReach; z++)
 					for (int y = 0; y <= leafReach; y++) {
-						Block block = log.getRelative(x, y, z);
+						Block current = log.getRelative(x, y, z);
 						
-						if (!ignoreHouseBlocks && Config.get().isHouseBlock(block))
-							if (HouseIgnore.get().ignoreHouseBlocks(player))
-								ignoreHouseBlocks = true;
-							else {
-								Message.NOTIFY.send(Permission.NOTIFY, player.getName(), formatLocation(block.getLocation()));
-								return false;
-							}
-						
-						//If jungle or oak, and vines, then add some.
-						if (block.getType() == Material.VINE)
-							vines.add(block.getLocation());
-						
-						if (!tree.isValidLeaf(block)) continue;		//If the block isn't a valid leaf, skip to the next loop.
-						if (leaves.contains(block)) continue;		//If the leaf has already been found, skip to the next loop.
-						if (groundInReach(block)) continue;			//If the leaf is within 'groundOffset' distance, skip to the next loop.
-						
-						leaves.add(block);
+						if (!processCurrentLeaf(current)) return false;
 					}
-		}
 		
 		return true;
 	}
 	
-	private String formatLocation(Location location) {
-		return 	location.getWorld().getName() + ":" +
-				"X: " + location.getBlockX() + ";" +
-				"Y: " + location.getBlockY() + ";" +
-				"Z: " + location.getBlockZ() + ";";
-	}
-	
-	private int getLeafReach() {
-		int baseLeafReach = tree.getLeafReach();
-		
-		//If an oak in a swamp, increase by 1
-		if (tree.getType() == TreeType.OAK && EnumSet.of(Biome.SWAMPLAND, Biome.SWAMPLAND_MOUNTAINS).contains(logs.get(0).getBiome()))
-			baseLeafReach += 1;
-		//Large oak, +1 (but only if not swamp)
-		else if (tree.getType() == TreeType.OAK && logs.size() > 20)
-			baseLeafReach += 1;
-		
-		//Large pine, +1
-		if (tree.getType() == TreeType.PINE && logs.size() > 20)
-			baseLeafReach += 1;
-		
-		//Large jungle, +2
-		if (tree.getType() == TreeType.JUNGLE && logs.size() > 20)
-			baseLeafReach += 2;
-		
-		return baseLeafReach;
-	}
-	
-	private boolean groundInReach(Block block) {
-		for (int i = 0; i <= tree.getLeafGroundOffset(); i++)
-			if (tree.isValidStandingBlock(block.getRelative(BlockFace.DOWN, i)))
-				return true;
-		
-		return false;
-	}
-	
-	private boolean chop() {
-		debugger.addStage("CA.chop"); //1
-		//First, try to damage the item in the player's hand. If this fails, don't break the tree.
-		if (!damageItem()) return false;
-
-		QwickTree.get().addTreeChop(tree.getType());
-		
-		debugger.addStage("CA.chop"); //2
-		//Leaves are broken whether or not autoCollect is enabled, so just break them here
-		for (Block leaf: leaves) {
-			Logging.logBreak(player, leaf);
-			leaf.setType(Material.AIR);
-		}
-
-		if (player.getGameMode() == GameMode.CREATIVE && Config.get().doCreativeAutoCollect()
-				|| tree.doAutoCollect()) {
-			//autoCollect is on, so break the logs.
-			for (Block log: logs) {
-				Logging.logBreak(player, log);
-				log.setType(Material.AIR);
+	private boolean processCurrentLeaf(Block current) {
+		//Check for house block
+		if (!ignoreHouseBlocks && Config.get().isHouseBlock(current))
+			if (HouseIgnore.get().ignoreHouseBlocks(player))
+				ignoreHouseBlocks = true;
+			else {
+				Message.NOTIFY.send(Permission.NOTIFY, player.getName(), formatLocation(current));
+				return false;
 			}
-			
-			//Add all the stuff to player's inventory.
-			dropToInventory();
-		}
-		else {
-			//Break the logs naturally
-			for (Block log: logs) {
-				Logging.logBreak(player, log);
-				log.breakNaturally();
-			}
-			
-			HashMap<Location, ItemStack> drops = processDrops();
-			
-			int maxVines = vines.size() / 100;
-			if (maxVines > 20) maxVines = 20;
-			
-			for (int i = 0; i < maxVines; i++)
-				dropInWorld(vines.get(i), new ItemStack(Material.VINE));
-			
-			for (Location location: drops.keySet())
-				dropInWorld(location, drops.get(location));
-		}
+		
+		//Check for vines
+		if (current.getType() == Material.VINE && vines.size() < 20)
+			vines.add(current);
+		
+		//Check for leaves
+		if (!tree.isValidLeaf(current) ||		//If it's not a valid leaf...
+				leaves.contains(current) ||		//...or the leaf has already been found...
+				groundInReach(current))			//...or it's within ground reach...
+			return true;						//...then get outta here!
+		
+		leaves.add(current);
+		return true;
+	}
+	
+	
+	private boolean checkSize() {
+		if (logs.size() < tree.getLogMin()) return false;
+		if (logs.size() > tree.getLogMax()) return false;
+		
+		if (leaves.size() < tree.getLeafMin()) return false;
 		
 		return true;
 	}
 	
-	private void dropToInventory() {
-		//Start with the logs
-		ItemStack logItem = tree.getLogItem(logs.size());
-		
-		putInInventory(logItem);
-		
-		int maxVines = vines.size() / 100;
-		if (maxVines > 20) maxVines = 20;
-		
-		putInInventory(new ItemStack(Material.VINE, maxVines));
-		
-		//Then the drops...
-		HashMap<Location, ItemStack> drops = processDrops();
-		
-		for (ItemStack item: drops.values())
-			putInInventory(item);
-	}
-	
-	private void putInInventory(ItemStack item) {
-		if (item.getAmount() == 0) return;
-		
-		HashMap<Integer, ItemStack> returned = player.getInventory().addItem(item);
-		
-		if (returned == null) return;
-		
-		for (ItemStack returnee: returned.values())
-			dropInWorld(player.getLocation(), returnee);
-	}
-	
-	private void dropInWorld(Location location, ItemStack item) {
-		location.getWorld().dropItemNaturally(location, item);
-	}
-	
-	private HashMap<Location, ItemStack> processDrops() {
-		HashMap<Location, ItemStack> drops = new HashMap<Location, ItemStack>();
-		HashMap<Material, Integer> maxDrops = new HashMap<Material, Integer>();
-		HashMap<Material, Double> treeDrops = tree.getDrops();
-		double count = (double) leaves.size();
-		
-		for (Material material: treeDrops.keySet())
-			maxDrops.put(material, (int) Math.ceil(count * treeDrops.get(material)));
-		
-		for (Block leaf: leaves) {
-			Material drop = nextItem(treeDrops, maxDrops);
-			
-			if (drop == null) continue;
-			
-			drops.put(leaf.getLocation(), tree.processItem(drop, 1));
-		}
-		
-		return drops;
-	}
-	
-	private Material nextItem(HashMap<Material, Double> treeDrops, HashMap<Material, Integer> maxDrops) {
-		double number = rnd.nextDouble();
-		Material selected = null;
-		
-		for (Material key: treeDrops.keySet()) {
-			selected = key;
-			if (number <= treeDrops.get(key)) break;
-		}
-		
-		int dropsLeft = maxDrops.get(selected);
-		
-		if (dropsLeft <= 0)
-			return null;
-		
-		maxDrops.put(selected, dropsLeft - 1);
-		return selected;
-	}
-	
-	private boolean damageItem() {
+	/* ### DAMAGE ### */
+	private boolean doDamage() {
+		//If player is creative and shouldn't do damage, then return
 		if (player.getGameMode() == GameMode.CREATIVE && !Config.get().doCreativeDamage()) return true;
 		
+		//Work out base damage
 		int damageAmt;
 		
 		switch (tree.getDamageType()) {
@@ -314,56 +265,191 @@ public class ChopAction {
 				damageAmt = 0;
 				break;
 			case NORM:
-				damageAmt = logs.size();
+				damageAmt = (short) logs.size();
 				break;
 			case FIXED:
-				damageAmt = tree.getDamageAmount();
+				damageAmt = (short) tree.getDamageAmount();
 				break;
 			case MULT:
-				damageAmt = tree.getDamageAmount() * logs.size();
-				break;
+				damageAmt = (short) (tree.getDamageAmount() * logs.size());
 		}
 		
-		if (damageAmt <= 0) return true; //Skip if damage to deal is 0
+		//Work out unbreaking
+		damageAmt = calculateUnbreaking(damageAmt);
 		
-		damageAmt = unbreaking(damageAmt);
-		
+		//Check we can do this damage
 		ItemStack item = player.getItemInHand();
-		short maxDurability = item.getType().getMaxDurability();
-		short newDurability = (short) (item.getDurability() + damageAmt);
+		short newDurability = (short) (item.getDurability() + damageAmt); //Figure out the new durability of the item
 		
-		if (newDurability >= maxDurability) return false; //Don't break the tree if the item would break.
+		if (newDurability > item.getType().getMaxDurability()) return false; //If the item cannot take this much damage, then return
 		
+		//Apply damage
 		item.setDurability(newDurability);
 		
 		return true;
 	}
 	
-	private int unbreaking(int damageAmt) {
+	private int calculateUnbreaking(int damageAmt) {
 		int unbreakingLevel = player.getItemInHand().getEnchantmentLevel(Enchantment.DURABILITY);
 		
+		//If the item doesn't have unbreaking, or the damage amount is already nothing (or less?!), then don't do anything
 		if (unbreakingLevel == 0 || damageAmt <= 0) return damageAmt;
 		
 		int newDamageAmt = 0;
-		double level = 0.5;
-		if (unbreakingLevel == 2) level = 0.6666;
-		else if (unbreakingLevel == 3) level = 0.75;
+		double chance = 0.5;
+		if (unbreakingLevel == 2) chance = 0.6666;
+		else if (unbreakingLevel == 3) chance = 0.75;
 		
-		//Since unbreaking is applied for each damage point, I'll do the same
-		for (int i = 0; i < damageAmt; i++)
-			if (rnd.nextDouble() >= level)
+		//Since unbreaking is applied for EACH point of damage, I'll do the same.
+		for (int point = 0; point < damageAmt; point++)
+			if (rnd.nextDouble() >= chance)
 				newDamageAmt ++;
 		
 		return newDamageAmt;
 	}
 	
-	private void replant() {
-		//Check if we should replant or not..
-		if (player.getGameMode() == GameMode.CREATIVE && !Config.get().doCreativeReplant()
-				|| !tree.doReplant()) return;
+	/* ### CHOP ### */
+	private void dropToInventory() {
+		ItemStack[] items = combineItems();
+		HashMap<Integer, ItemStack> returned = player.getInventory().addItem(items);
 		
-		TreeReplanter replanter = new TreeReplanter(tree, baseBlocks);
+		if (returned == null) return;
 		
-		Bukkit.getScheduler().scheduleSyncDelayedTask(QwickTree.get(), replanter);
+		ItemStack[] returnedItems = returned.values().toArray(new ItemStack[returned.size()]);
+		
+		dropAt(baseBlocks.get(0), returnedItems);
 	}
+	
+	private void dropToGroup() {
+		dropAt(baseBlocks.get(0), combineItems());
+	}
+	
+	private void dropToWorld() {
+		HashMap<Location, ItemStack> drops = processDrops();
+		
+		for (Location location: drops.keySet())
+			dropAt(location, drops.get(location));
+	}
+	
+	
+	private ItemStack[] combineItems() {
+		Collection<ItemStack> drops = processDrops().values();
+		HashMap<Material, Integer> combinedDrops = new HashMap<Material, Integer>();
+		
+		//First get how many of each item we should have
+		for (ItemStack drop: drops) {
+			int qty = drop.getAmount();
+			
+			if (combinedDrops.containsKey(drop.getType()))
+				qty += combinedDrops.get(drop.getType());
+			
+			combinedDrops.put(drop.getType(), qty);
+		}
+		
+		//Add the logs, since everything here is being combined...
+		combinedDrops.put(Material.LOG, logs.size());
+		
+		//And then the vines if there are any.
+		if (vines.size() > 0)
+			combinedDrops.put(Material.VINE, vines.size());
+		
+		//Then create ItemStacks of this
+		List<ItemStack> combinedList = new ArrayList<ItemStack>(combinedDrops.size());
+		
+		for (Material material: combinedDrops.keySet())
+			combinedList.add(tree.processItem(material, combinedDrops.get(material)));
+		
+		return combinedList.toArray(new ItemStack[combinedList.size()]);
+	}
+	
+	private HashMap<Location, ItemStack> processDrops() {
+		HashMap<Location, ItemStack> drops = new HashMap<Location, ItemStack>();
+		
+		//For each leaf...
+		for (Block leaf: leaves) {
+			//Get a random material to use.
+			Material drop = getRandomDrop();
+			if (drop == null) continue;
+			
+			drops.put(leaf.getLocation(), tree.processItem(drop, 1));
+		}
+		
+		return drops;
+	}
+	
+	private Material getRandomDrop() {
+		HashMap<Material, Double> dropChances = tree.getDrops();
+		double number = rnd.nextDouble();
+		Material selected = null;
+		
+		for (Material dropMaterial: dropChances.keySet()) {
+			selected = dropMaterial;
+			
+			if (number <= dropChances.get(dropMaterial)) break;
+		}
+		
+		return selected;
+	}
+	
+	private void dropAt(Location location, ItemStack... items) {
+		for (ItemStack item: items)
+			location.getWorld().dropItemNaturally(location, item);
+	}
+
+	/* ### OTHER ### */
+	
+	private int getLeafReach() {
+		int baseLeafReach = tree.getLeafReach();
+		
+		TreeType type = tree.getType();
+		int size = logs.size();
+		Biome biome = logs.get(0).getBiome();
+		
+		
+		if (type == TreeType.OAK)
+			if (biome == Biome.SWAMPLAND || biome == Biome.SWAMPLAND_MOUNTAINS)
+				baseLeafReach += 1;		//Oak in swamp, increase by 1
+			else if (size >= 15)
+				baseLeafReach += 1;		//Large oak elsewhere, increase by 1
+		
+		if (type == TreeType.PINE && size >= 20)
+			baseLeafReach += 1;			//Large pine, increase by 1
+		
+		if (type == TreeType.JUNGLE && size >= 20)
+			baseLeafReach += 2;			//Large jungle, increase by 1
+		
+		return baseLeafReach;
+	}
+	
+	private String formatLocation(Block block) {
+		Location location = block.getLocation();
+		
+		return  location.getWorld().getName() + ", " +
+				location.getBlockX() + ", " + 
+				location.getBlockY() + ", " +
+				location.getBlockZ();
+	}
+	
+	private boolean groundInReach(Block block) {
+		int groundReach = tree.getLeafGroundOffset();
+		
+		for (int distance = 1; distance <= groundReach; distance++) {
+			Block newBlock = block.getRelative(BlockFace.DOWN, distance);
+			
+			if (tree.isValidStandingBlock(newBlock)) return true;
+		}
+		
+		return false;
+	}
+	
+	private void breakBlock(Block block) {
+		block.setType(Material.AIR);
+		Logging.logBreak(player, block);
+	}
+	
+	private void breakBlockNaturally(Block block) {
+		block.breakNaturally();
+		Logging.logBreak(player, block);
+	}
+	
 }

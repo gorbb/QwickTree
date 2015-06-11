@@ -33,7 +33,8 @@ public class Config {
 	private List<Material> houseBlock,
 						   handItems;
 	
-	private boolean creativeAutoCollect,
+	private boolean groupDrops,
+					creativeAutoCollect,
 					creativeReplant,
 					creativeDamage;
 	
@@ -53,6 +54,8 @@ public class Config {
 		
 		if (config.getBoolean("allowSelfToggle"))	 Permission.TOGGLE_SELF.setDefault(true);
 												else Permission.TOGGLE_SELF.setOp(true);
+		
+		groupDrops = config.getBoolean("groupDrops");
 		
 		creativeAutoCollect = config.getBoolean("creative.autoCollect");
 		creativeReplant = config.getBoolean("creative.replant");
@@ -130,6 +133,10 @@ public class Config {
 		if (handItems.isEmpty()) return true;
 		
 		return handItems.contains(item.getType());
+	}
+	
+	public boolean doGroupDrops() {
+		return groupDrops;
 	}
 	
 	public boolean doCreativeAutoCollect() {
