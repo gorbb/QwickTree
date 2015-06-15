@@ -36,9 +36,6 @@ public class Logging {
 		
 		if (!coreProtect.isEnabled() || coreProtect.APIVersion() < 3)
 			coreProtect = null;
-		
-		if (coreProtect != null)
-			coreProtect.testAPI();
 	}
 	
 	private static void logBreakCoreProtect(Player player, Block block) {
