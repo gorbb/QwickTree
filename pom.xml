@@ -106,7 +106,7 @@
 		
 		<finalName>QwickTree</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<directory>${basedir}/../Builds/${name}/${version}/</directory>
+		<directory>${basedir}/Export/${version}/</directory>
 		<resources>
 			<resource>
 				<targetPath>.</targetPath>

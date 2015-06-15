@@ -9,3 +9,7 @@
 # Maven
 log/
 target/
+
+# Export folder
+
+Export/
