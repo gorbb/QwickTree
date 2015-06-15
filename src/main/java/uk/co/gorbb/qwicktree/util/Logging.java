@@ -12,7 +12,8 @@ import org.bukkit.plugin.Plugin;
 public class Logging {
 	
 	public static void checkPlugins() {
-		logDetails(checkPluginCoreProtect(), "CoreProtect");
+		//Temporarily removed since it doesn't appear to work.
+		//logDetails(checkPluginCoreProtect(), "CoreProtect");
 	}
 	
 	private static void logDetails(boolean result, String pluginName) {
@@ -23,11 +24,13 @@ public class Logging {
 	}
 	
 	public static void logBreak(Player player, Block block) {
-		logBreakCoreProtect(player, block);
+		//Temporarily removed since it doesn't appear to work.
+		//logBreakCoreProtect(player, block);
 	}
 	
 	public static void logPlace(Player player, Block block) {
-		logPlaceCoreProtect(player, block);
+		//Temporarily removed since it doesn't appear to work.
+		//logPlaceCoreProtect(player, block);
 	}
 	
 	/* ### CORE PROTECT ### */
