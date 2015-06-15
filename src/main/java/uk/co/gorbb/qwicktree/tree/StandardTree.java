@@ -76,7 +76,7 @@ public class StandardTree extends TreeInfo {
 
 	@Override
 	public ItemStack processItem(Material material, int qty) {
-		if (!Tree.class.isInstance(material.getData())) //Quick way to see if we can set the item to the same type as the tree (i.e. leaves, sapling, plank, etc.)
+		if (!Tree.class.isAssignableFrom(material.getData())) //Quick way to see if we can set the item to the same type as the tree (i.e. leaves, sapling, plank, etc.)
 			return new ItemStack(material, qty);
 		
 		Tree tree = new Tree(material);
