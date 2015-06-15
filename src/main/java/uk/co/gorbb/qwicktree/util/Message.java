@@ -10,6 +10,9 @@ import org.bukkit.entity.Player;
 import uk.co.gorbb.qwicktree.QwickTree;
 
 public enum Message {
+	EXTERNAL_PLUGIN_ENABLED("Plugin {0} was found."),
+	EXTERNAL_PLUGIN_DISABLED("Plugin {0} wasn't found. Additional features requiring this plugin may be disabled."),
+	
 	MATERIAL_CONVERT_ERROR("Cannot convert '{0}' to material, ignoring..."),
 	CHANCE_CONVERT_ERROR("Error converting {0} to a double. Ignoring entry {1}..."),
 	INVALID_DAMAGE_TYPE("Invalid damage type for tree type {0}. Expected one of NONE, NORM, FIXED, MULT, but got {1}. Ignoring tree type..."),
