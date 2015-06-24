@@ -448,13 +448,13 @@ public class ChopAction {
 	}
 	
 	private void breakBlock(Block block) {
-		block.setType(Material.AIR);
 		Logging.logBreak(player, block);
+		block.setType(Material.AIR);
 	}
 	
 	private void breakBlockNaturally(Block block) {
-		block.breakNaturally();
 		Logging.logBreak(player, block);
+		block.breakNaturally();
 	}
 	
 }
