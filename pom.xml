@@ -9,7 +9,7 @@
 	
 	<name>QwickTree</name>
 	<url>http://dev.bukkit.org/bukkit-plugins/qwicktree/</url>
-	<description></description>
+	<description>Quickly chop down trees with the swing of an axe!</description>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
