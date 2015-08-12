@@ -13,3 +13,4 @@ target/
 # Export folder
 
 Export/
+*.class
