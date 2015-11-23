@@ -79,6 +79,8 @@ public class Config {
 		boolean enabled = config.getBoolean(tag + "enabled");
 		boolean replant = config.getBoolean(tag + "replant");
 		boolean autoCollect = config.getBoolean(tag + "autoCollect");
+		boolean allowStump = config.getBoolean(tag + "stump");
+		boolean anyBlock = config.getBoolean(tag + "anyBlock");
 		
 		int leafReach = config.getInt(tag + "leaf.reach");
 		int leafGroundOffset = config.getInt(tag + "leaf.groundOffset");
@@ -102,9 +104,9 @@ public class Config {
 		switch (species) {
 			case ACACIA:
 			case DARK_OAK:
-				return new NewTree(species, enabled, replant, autoCollect, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
+				return new NewTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
 			default:
-				return new StandardTree(species, enabled, replant, autoCollect, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
+				return new StandardTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
 		}
 	}
 	

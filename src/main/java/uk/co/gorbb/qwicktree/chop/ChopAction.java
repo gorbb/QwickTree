@@ -35,6 +35,7 @@ public class ChopAction {
 	
 	private Stack<Block> logsToSearch;
 	private List<Location> baseBlocks;
+	private Location dropLocation;
 	
 	private List<Block> logs,
 						leaves,
@@ -62,6 +63,7 @@ public class ChopAction {
 		debugger = Debugger.get(player);
 		
 		logsToSearch.add(baseBlock);
+		dropLocation = baseBlock.getLocation();
 	}
 	
 	public void go() {
@@ -188,9 +190,11 @@ public class ChopAction {
 	}
 	
 	private void searchCurrentLog(Block current) {
+		int yStart = tree.getAnyBlock() ? -1 : 0;
+		
 		for (int x = -1; x <= 1; x++)
 			for (int z = -1; z <= 1; z++)
-				for (int y = 0; y <= 1; y++) {
+				for (int y = yStart; y <= 1; y++) {
 					Block block = current.getRelative(x, y, z);
 					
 					if (!tree.isValidLog(block) ||				//If it's not a valid log...
@@ -322,11 +326,11 @@ public class ChopAction {
 		
 		ItemStack[] returnedItems = returned.values().toArray(new ItemStack[returned.size()]);
 		
-		dropAt(baseBlocks.get(0), returnedItems);
+		dropAt(dropLocation, returnedItems);
 	}
 	
 	private void dropToGroup() {
-		dropAt(baseBlocks.get(0), combineItems());
+		dropAt(dropLocation, combineItems());
 	}
 	
 	private void dropToWorld() {

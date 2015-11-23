@@ -29,6 +29,8 @@ trees:
   enabled: true
   replant: true
   autoCollect: false
+  stump: true
+  anyBlock: false
   leaf:
    reach: 2
    groundOffset: 0
@@ -47,6 +49,8 @@ trees:
   enabled: true
   replant: true
   autoCollect: false
+  stump: true
+  anyBlock: false
   leaf:
    reach: 2
    groundOffset: 0
@@ -64,6 +68,8 @@ trees:
   enabled: true
   replant: true
   autoCollect: false
+  stump: true
+  anyBlock: false
   leaf:
    reach: 3
    groundOffset: 0
@@ -81,6 +87,8 @@ trees:
   enabled: true
   replant: true
   autoCollect: false
+  stump: true
+  anyBlock: false
   leaf:
    reach: 2
    groundOffset: 0
@@ -98,6 +106,8 @@ trees:
   enabled: true
   replant: true
   autoCollect: false
+  stump: true
+  anyBlock: false
   leaf:
    reach: 3
    groundOffset: 0
@@ -115,6 +125,8 @@ trees:
   enabled: true
   replant: true
   autoCollect: false
+  stump: true
+  anyBlock: false
   leaf:
    reach: 3
    groundOffset: 0

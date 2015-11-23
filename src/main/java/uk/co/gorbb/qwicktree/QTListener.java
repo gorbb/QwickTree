@@ -43,8 +43,8 @@ public class QTListener implements Listener {
 		if (!tree.isEnabled()) return;
 
 		debugger.addStage("QTL.blockEvent"); //4
-		//Tree has to be on the ground
-		if (!tree.isValidStandingBlock(block.getRelative(BlockFace.DOWN))) return;
+		//Tree has to be on the ground or stump should be enabled
+		if (!tree.isValidStandingBlock(block.getRelative(BlockFace.DOWN)) && !tree.getAllowStump()) return;
 
 		debugger.addStage("QTL.blockEvent"); //5
 		//Okay then, chop!

@@ -17,7 +17,9 @@ public abstract class TreeInfo {
 	
 	private boolean 					enabled,			//Whether or not this tree is enabled.
 										replant,			//Whether or not to replace saplings when the tree is chopped down.
-										autoCollect;		//Whether to automatically place the items dropped into the player's inventory.
+										autoCollect,		//Whether to automatically place the items dropped into the player's inventory.
+										stump,				//Can the tree be chopped from above the base block?
+										anyBlock;			//Can any block be broken to chop the entire tree?
 	
 	private int							leafReach,			//How far from the logs to search for leaves.
 										leafGroundOffset,	//What level to ignore leaves at depending on how close they are to the ground. 
@@ -31,13 +33,15 @@ public abstract class TreeInfo {
 	private DamageType					damageType;			//Which type of damage to deal to a damagable item when the tree is chopped.
 	private int							damageAmount;		//The multiplier or amount of damage to deal, depending on the damage type.
 	
-	public TreeInfo(TreeType treeType, boolean enabled, boolean replant, boolean autoCollect, int leafReach, int leafGroundOffset, int leafMin,
+	public TreeInfo(TreeType treeType, boolean enabled, boolean replant, boolean autoCollect, boolean stump, boolean anyBlock, int leafReach, int leafGroundOffset, int leafMin,
 					int logMin, int logMax, List<String> drops, DamageType damageType, int damageAmount) {
 		this.treeType = treeType;
 		
 		this.enabled = enabled;
 		this.replant = replant;
 		this.autoCollect = autoCollect;
+		this.stump = stump;
+		this.anyBlock = anyBlock;
 		
 		this.leafReach = leafReach;
 		this.leafGroundOffset = leafGroundOffset;
@@ -95,6 +99,14 @@ public abstract class TreeInfo {
 	
 	public boolean doAutoCollect() {
 		return autoCollect;
+	}
+	
+	public boolean getAnyBlock() {
+		return anyBlock;
+	}
+	
+	public boolean getAllowStump() {
+		return stump;
 	}
 	
 	public int getLeafReach() {

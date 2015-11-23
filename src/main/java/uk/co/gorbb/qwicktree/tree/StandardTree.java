@@ -16,9 +16,9 @@ import uk.co.gorbb.qwicktree.tree.info.TreeType;
 public class StandardTree extends TreeInfo {
 	private TreeSpecies species;
 	
-	public StandardTree(TreeSpecies species, boolean enabled, boolean replant, boolean autoCollect, int leafReach, int leafGroundOffset, int leafMin,
+	public StandardTree(TreeSpecies species, boolean enabled, boolean replant, boolean autoCollect, boolean stump, boolean anyBlock, int leafReach, int leafGroundOffset, int leafMin,
 						int logMin, int logMax, List<String> drops, DamageType damageType, int damageAmount) {
-		super(TreeType.getFromSpecies(species), enabled, replant, autoCollect, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
+		super(TreeType.getFromSpecies(species), enabled, replant, autoCollect, stump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
 		
 		this.species = species;
 	}
