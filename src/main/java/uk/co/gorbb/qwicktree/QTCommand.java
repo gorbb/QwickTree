@@ -131,8 +131,14 @@ public class QTCommand implements CommandExecutor {
 		if (player == null) return Message.PLAYER_NOT_FOUND_OFFLINE.send(sender, name);
 		
 		//Permission check
-		if (player.equals(sender) && !Permission.TOGGLE_SELF.has(sender)) return Message.NO_PERMISSION.send(sender);
-		else if (!Permission.TOGGLE_OTHERS.has(sender)) return Message.NO_PERMISSION.send(sender);
+		boolean toggleSelf = Permission.TOGGLE_SELF.has(sender) || Config.get().allowSelfToggle();
+		
+		if (player.equals(sender)) {
+			if (!toggleSelf)
+				return Message.NO_PERMISSION.send(sender);
+		}
+		else if (!Permission.TOGGLE_OTHERS.has(sender))
+			return Message.NO_PERMISSION.send(sender);
 		
 		if (DisabledList.get().isDisabledForPlayer(player)) return Message.ALREADY_DISABLED.send(sender, player.getName());
 		
@@ -168,8 +174,14 @@ public class QTCommand implements CommandExecutor {
 		if (player == null) return Message.PLAYER_NOT_FOUND_OFFLINE.send(sender, name);
 		
 		//Permission check
-		if (player.equals(sender) && !Permission.TOGGLE_SELF.has(sender)) return Message.NO_PERMISSION.send(sender);
-		else if (!Permission.TOGGLE_OTHERS.has(sender)) return Message.NO_PERMISSION.send(sender);
+		boolean toggleSelf = Permission.TOGGLE_SELF.has(sender) || Config.get().allowSelfToggle();
+		
+		if (player.equals(sender)) {
+			if (!toggleSelf)
+				return Message.NO_PERMISSION.send(sender);
+		}
+		else if (!Permission.TOGGLE_OTHERS.has(sender))
+			return Message.NO_PERMISSION.send(sender);
 		
 		if (!DisabledList.get().isDisabledForPlayer(player)) return Message.ALREADY_ENABLED.send(sender, player.getName());
 		

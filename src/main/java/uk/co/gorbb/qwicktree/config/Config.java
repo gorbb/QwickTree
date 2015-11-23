@@ -33,7 +33,9 @@ public class Config {
 	private List<Material> houseBlock,
 						   handItems;
 	
-	private boolean groupDrops,
+	private boolean usePerms,
+					allowSelfToggle,
+					groupDrops,
 					creativeAutoCollect,
 					creativeReplant,
 					creativeDamage;
@@ -49,11 +51,13 @@ public class Config {
 		houseBlock = toMaterialList(config.getStringList("house"));
 		handItems = toMaterialList(config.getStringList("items"));
 		
-		if (config.getBoolean("usePerms"))   Permission.NOTIFY.setDefault(false);
-										else Permission.NOTIFY.setDefault(true);
+		usePerms = config.getBoolean("usePerms");
+		if (usePerms)	Permission.USE.setDefault(false);
+		else			Permission.USE.setDefault(true);
 		
-		if (config.getBoolean("allowSelfToggle"))	 Permission.TOGGLE_SELF.setDefault(true);
-												else Permission.TOGGLE_SELF.setOp(true);
+		allowSelfToggle = config.getBoolean("allowSelfToggle");
+		if (allowSelfToggle)	Permission.TOGGLE_SELF.setDefault(true);
+		else					Permission.TOGGLE_SELF.setOp(true);
 		
 		groupDrops = config.getBoolean("groupDrops");
 		
@@ -133,6 +137,14 @@ public class Config {
 		if (handItems.isEmpty()) return true;
 		
 		return handItems.contains(item.getType());
+	}
+	
+	public boolean usePerms() {
+		return usePerms;
+	}
+	
+	public boolean allowSelfToggle() {
+		return allowSelfToggle;
 	}
 	
 	public boolean doGroupDrops() {

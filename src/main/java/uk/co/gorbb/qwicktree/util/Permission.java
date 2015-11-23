@@ -38,9 +38,8 @@ public enum Permission {
 		setDefault(defaultValue);
 	}
 	
-	
 	public void setOp(boolean op) {
-		PermissionDefault defaultValue = op ? PermissionDefault.TRUE : PermissionDefault.FALSE;
+		PermissionDefault defaultValue = op ? PermissionDefault.OP : PermissionDefault.NOT_OP;
 		
 		setDefault(defaultValue);
 	}

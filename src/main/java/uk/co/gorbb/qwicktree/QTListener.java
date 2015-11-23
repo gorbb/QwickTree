@@ -61,8 +61,8 @@ public class QTListener implements Listener {
 		if (!Config.get().isHandItem(player.getItemInHand())) return false;
 		
 		debugger.addStage("QTL.canChop"); //2
-		//Check player has permission
-		if (!Permission.USE.has(player)) return false;
+		//Check player has permission or usePerms is false in config
+		if (!Permission.USE.has(player) && Config.get().usePerms()) return false;
 		
 		debugger.addStage("QTL.canChop"); //3
 		//Check plugin is enabled for player
