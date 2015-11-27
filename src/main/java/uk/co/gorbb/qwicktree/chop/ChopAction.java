@@ -166,7 +166,7 @@ public class ChopAction {
 			if (!processCurrentLog(current)) return false;
 			
 			//Then search around it.
-			searchCurrentLog(current);
+			if (!searchCurrentLog(current)) return false;
 		}
 		
 		return true;
@@ -182,20 +182,22 @@ public class ChopAction {
 		//Check against max tree size
 		if (logs.size() > tree.getLogMax()) return false;
 		
-		//If it's a standing block, then add it to base blocks too
-		if (tree.isValidStandingBlock(block.getRelative(BlockFace.DOWN)))
+		//If it's a standing block, then add it to base blocks too, but only if there's space
+		if (tree.isValidStandingBlock(block.getRelative(BlockFace.DOWN)) && baseBlocks.size() < 4)
 			baseBlocks.add(block.getLocation());
 		
 		return true;
 	}
 	
-	private void searchCurrentLog(Block current) {
+	private boolean searchCurrentLog(Block current) {
 		int yStart = tree.getAnyBlock() ? -1 : 0;
 		
 		for (int x = -1; x <= 1; x++)
 			for (int z = -1; z <= 1; z++)
 				for (int y = yStart; y <= 1; y++) {
 					Block block = current.getRelative(x, y, z);
+					
+					if (!houseBlockSearch(block)) return false;
 					
 					if (!tree.isValidLog(block) ||				//If it's not a valid log...
 							logsToSearch.contains(block) ||		//...or is already set to search around...
@@ -205,8 +207,28 @@ public class ChopAction {
 					
 					logsToSearch.push(block);
 				}
+		
+		return true;
 	}
 	
+	private boolean houseBlockSearch(Block log) {
+		for (int x = -2; x <= 2; x++)
+			for (int z = -2; z <= 2; z++)
+				for (int y = -1; y <= 1; y++) {
+					Block current = log.getRelative(x,  y,  z);
+					
+					// Check for house block
+					if (!ignoreHouseBlocks && Config.get().isHouseBlock(current))
+						if (HouseIgnore.get().ignoreHouseBlocks(player))
+							ignoreHouseBlocks = true;
+						else {
+							Message.NOTIFY.send(Permission.NOTIFY, player.getName(), formatLocation(current));
+							return false;
+						}
+				}
+
+		return true;
+	}
 	
 	private boolean leafSearch() {
 		int leafReach = getLeafReach();
@@ -224,15 +246,6 @@ public class ChopAction {
 	}
 	
 	private boolean processCurrentLeaf(Block current) {
-		//Check for house block
-		if (!ignoreHouseBlocks && Config.get().isHouseBlock(current))
-			if (HouseIgnore.get().ignoreHouseBlocks(player))
-				ignoreHouseBlocks = true;
-			else {
-				Message.NOTIFY.send(Permission.NOTIFY, player.getName(), formatLocation(current));
-				return false;
-			}
-		
 		//Check for vines
 		if (current.getType() == Material.VINE && vines.size() < 20)
 			vines.add(current);
