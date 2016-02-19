@@ -40,6 +40,8 @@ public class Config {
 					creativeReplant,
 					creativeDamage;
 	
+	private int maxVines;
+	
 	private Config() {
 		config = QwickTree.get().getConfig();
 		QwickTree.get().saveDefaultConfig();
@@ -64,6 +66,8 @@ public class Config {
 		creativeAutoCollect = config.getBoolean("creative.autoCollect");
 		creativeReplant = config.getBoolean("creative.replant");
 		creativeDamage = config.getBoolean("creative.damage");
+		
+		maxVines = config.getInt("maxVines");
 		
 		trees.add(processTree(TreeSpecies.GENERIC, "oak"));
 		trees.add(processTree(TreeSpecies.REDWOOD, "pine"));
@@ -163,5 +167,9 @@ public class Config {
 	
 	public boolean doCreativeDamage() {
 		return creativeDamage;
+	}
+	
+	public int getMaxVines() {
+		return maxVines;
 	}
 }

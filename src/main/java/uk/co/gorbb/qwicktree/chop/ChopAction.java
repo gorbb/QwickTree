@@ -247,7 +247,7 @@ public class ChopAction {
 	
 	private boolean processCurrentLeaf(Block current) {
 		//Check for vines
-		if (current.getType() == Material.VINE && vines.size() < 20)
+		if (current.getType() == Material.VINE && vines.size() < Config.get().getMaxVines())
 			vines.add(current);
 		
 		//Check for leaves

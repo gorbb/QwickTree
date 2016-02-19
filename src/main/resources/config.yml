@@ -18,6 +18,7 @@ house:
 allowSelfToggle: false
 usePerms: true
 groupDrops: true
+maxVines: 20
 
 creative:
  autoCollect: true
