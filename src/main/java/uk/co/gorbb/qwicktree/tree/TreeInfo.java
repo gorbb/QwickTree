@@ -33,6 +33,9 @@ public abstract class TreeInfo {
 	private DamageType					damageType;			//Which type of damage to deal to a damagable item when the tree is chopped.
 	private int							damageAmount;		//The multiplier or amount of damage to deal, depending on the damage type.
 	
+	protected Material 					logMaterial,
+										leafMaterial;
+	
 	public TreeInfo(TreeType treeType, boolean enabled, boolean replant, boolean autoCollect, boolean stump, boolean anyBlock, int leafReach, int leafGroundOffset, int leafMin,
 					int logMin, int logMax, List<String> drops, DamageType damageType, int damageAmount) {
 		this.treeType = treeType;
@@ -54,6 +57,9 @@ public abstract class TreeInfo {
 		
 		this.damageType = damageType;
 		this.damageAmount = damageAmount;
+		
+		this.logMaterial = treeType.getLogMaterial();
+		this.leafMaterial = treeType.getLeafMaterial();
 	}
 	
 	private HashMap<Double, Material> processDrops(List<String> drops) {

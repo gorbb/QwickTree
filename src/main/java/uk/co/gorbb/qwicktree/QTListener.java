@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -17,7 +18,7 @@ import uk.co.gorbb.qwicktree.util.debug.Debugger;
 
 public class QTListener implements Listener {
 	
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void blockBreakEvent(BlockBreakEvent event) {
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
@@ -58,7 +59,7 @@ public class QTListener implements Listener {
 	private boolean canChop(Debugger debugger, Player player) {
 		debugger.addStage("QTL.canChop"); //1
 		//Player needs to have one of the 'items' in their hand.
-		if (!Config.get().isHandItem(player.getItemInHand())) return false;
+		if (!Config.get().isHandItem(player.getInventory().getItemInMainHand())) return false;
 		
 		debugger.addStage("QTL.canChop"); //2
 		//Check player has permission or usePerms is false in config

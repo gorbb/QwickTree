@@ -300,7 +300,8 @@ public class ChopAction {
 		damageAmt = calculateUnbreaking(damageAmt);
 		
 		//Check we can do this damage
-		ItemStack item = player.getItemInHand();
+		
+		ItemStack item = player.getInventory().getItemInMainHand();
 		short newDurability = (short) (item.getDurability() + damageAmt); //Figure out the new durability of the item
 		
 		if (newDurability > item.getType().getMaxDurability()) return false; //If the item cannot take this much damage, then return
@@ -312,7 +313,7 @@ public class ChopAction {
 	}
 	
 	private int calculateUnbreaking(int damageAmt) {
-		int unbreakingLevel = player.getItemInHand().getEnchantmentLevel(Enchantment.DURABILITY);
+		int unbreakingLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.DURABILITY);
 		
 		//If the item doesn't have unbreaking, or the damage amount is already nothing (or less?!), then don't do anything
 		if (unbreakingLevel == 0 || damageAmt <= 0) return damageAmt;
@@ -429,7 +430,7 @@ public class ChopAction {
 		
 		
 		if (type == TreeType.OAK)
-			if (biome == Biome.SWAMPLAND || biome == Biome.SWAMPLAND_MOUNTAINS)
+			if (biome == Biome.SWAMPLAND || biome == Biome.MUTATED_SWAMPLAND)
 				baseLeafReach += 1;		//Oak in swamp, increase by 1
 			else if (size >= 15)
 				baseLeafReach += 1;		//Large oak elsewhere, increase by 1

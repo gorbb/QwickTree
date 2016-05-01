@@ -10,7 +10,6 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.inventory.ItemStack;
 
 import uk.co.gorbb.qwicktree.QwickTree;
-import uk.co.gorbb.qwicktree.tree.NewTree;
 import uk.co.gorbb.qwicktree.tree.StandardTree;
 import uk.co.gorbb.qwicktree.tree.TreeInfo;
 import uk.co.gorbb.qwicktree.tree.info.DamageType;
@@ -105,13 +104,13 @@ public class Config {
 		
 		int damageAmount = config.getInt(tag + "damage.amount");
 		
-		switch (species) {
+		return new StandardTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
+		//return new NewTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
+		/*switch (species) {
 			case ACACIA:
 			case DARK_OAK:
-				return new NewTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
 			default:
-				return new StandardTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
-		}
+		}*/
 	}
 	
 	private List<Material> toMaterialList(List<String> list) {

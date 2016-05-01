@@ -1,5 +1,6 @@
 package uk.co.gorbb.qwicktree.tree.info;
 
+import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
 
 public enum TreeType {
@@ -21,6 +22,38 @@ public enum TreeType {
 	@Override
 	public String toString() {
 		return name;
+	}
+	
+	public Material getLogMaterial() {
+		switch (this) {
+			case OAK:
+			case PINE:
+			case BIRCH:
+			case JUNGLE:
+				return Material.LOG;
+			case ACACIA:
+			case DARK_OAK:
+				return Material.LOG_2;
+			case CUSTOM:
+			default:
+				return null;
+		}
+	}
+	
+	public Material getLeafMaterial() {
+		switch (this) {
+			case OAK:
+			case PINE:
+			case BIRCH:
+			case JUNGLE:
+				return Material.LEAVES;
+			case ACACIA:
+			case DARK_OAK:
+				return Material.LEAVES_2;
+			case CUSTOM:
+			default:
+				return null;
+		}
 	}
 	
 	public static TreeType getFromSpecies(TreeSpecies species) {

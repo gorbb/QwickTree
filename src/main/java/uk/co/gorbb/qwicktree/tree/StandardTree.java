@@ -8,7 +8,8 @@ import org.bukkit.TreeSpecies;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Tree;
+import org.bukkit.material.Sapling;
+import org.bukkit.material.Wood;
 
 import uk.co.gorbb.qwicktree.tree.info.DamageType;
 import uk.co.gorbb.qwicktree.tree.info.TreeType;
@@ -29,12 +30,12 @@ public class StandardTree extends TreeInfo {
 	
 	@Override
 	public boolean isValidLog(Block block) {
-		return checkSpecies(Material.LOG, block.getState());
+		return checkSpecies(logMaterial, block.getState());
 	}
 
 	@Override
 	public boolean isValidLeaf(Block block) {
-		return checkSpecies(Material.LEAVES, block.getState());
+		return checkSpecies(leafMaterial, block.getState());
 	}
 
 	@Override
@@ -45,9 +46,9 @@ public class StandardTree extends TreeInfo {
 	private boolean checkSpecies(Material material, BlockState state) {
 		if (state.getType() != material) return false;
 		
-		Tree tree = (Tree) state.getData();
+		Wood wood = (Wood) state.getData();
 		
-		return tree.getSpecies() == species;
+		return wood.getSpecies() == species;
 	}
 
 	@Override
@@ -66,20 +67,20 @@ public class StandardTree extends TreeInfo {
 		Block block = location.getBlock();
 		block.setType(Material.SAPLING);
 		
-		Tree data = new Tree(species);
+		Sapling sapling = new Sapling(species);
 		
 		BlockState state = block.getState();
-		state.setData(data);
+		state.setData(sapling);
 		
 		state.update();
 	}
 
 	@Override
 	public ItemStack processItem(Material material, int qty) {
-		if (!Tree.class.isAssignableFrom(material.getData())) //Quick way to see if we can set the item to the same type as the tree (i.e. leaves, sapling, plank, etc.)
+		if (!Wood.class.isAssignableFrom(material.getData())) //Quick way to see if we can set the item to the same type as the tree (i.e. leaves, sapling, plank, etc.)
 			return new ItemStack(material, qty);
 		
-		Tree tree = new Tree(material);
+		Wood tree = new Wood(material, species);
 		
 		tree.setSpecies(species);
 		return tree.toItemStack(qty);
