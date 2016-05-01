@@ -103,14 +103,9 @@ public class Config {
 		}
 		
 		int damageAmount = config.getInt(tag + "damage.amount");
+		int replantTimer = config.getInt(tag + "replantTimer");
 		
-		return new StandardTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
-		//return new NewTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
-		/*switch (species) {
-			case ACACIA:
-			case DARK_OAK:
-			default:
-		}*/
+		return new StandardTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount, replantTimer);
 	}
 	
 	private List<Material> toMaterialList(List<String> list) {

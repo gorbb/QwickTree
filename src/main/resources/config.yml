@@ -32,6 +32,7 @@ trees:
   autoCollect: false
   stump: true
   anyBlock: false
+  replantTimer: 0
   leaf:
    reach: 2
    groundOffset: 0
@@ -52,6 +53,7 @@ trees:
   autoCollect: false
   stump: true
   anyBlock: false
+  replantTimer: 0
   leaf:
    reach: 2
    groundOffset: 0
@@ -71,6 +73,7 @@ trees:
   autoCollect: false
   stump: true
   anyBlock: false
+  replantTimer: 0
   leaf:
    reach: 3
    groundOffset: 0
@@ -90,6 +93,7 @@ trees:
   autoCollect: false
   stump: true
   anyBlock: false
+  replantTimer: 0
   leaf:
    reach: 2
    groundOffset: 0
@@ -109,6 +113,7 @@ trees:
   autoCollect: false
   stump: true
   anyBlock: false
+  replantTimer: 0
   leaf:
    reach: 3
    groundOffset: 0
@@ -128,6 +133,7 @@ trees:
   autoCollect: false
   stump: true
   anyBlock: false
+  replantTimer: 0
   leaf:
    reach: 3
    groundOffset: 0

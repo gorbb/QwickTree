@@ -16,6 +16,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -40,6 +41,8 @@ public class ChopAction {
 	private List<Block> logs,
 						leaves,
 						vines;
+	
+	private Item		droppedSaplings;
 	
 	private Random rnd;
 	
@@ -129,8 +132,8 @@ public class ChopAction {
 			
 			dropToInventory();
 		}
-		//Check if groupDrops
-		else if (Config.get().doGroupDrops()) {
+		//Check if groupDrops (enabled if tree has replant timer
+		else if (Config.get().doGroupDrops() || tree.getReplantTimer() > 0) {
 			for (Block log: logs)
 				breakBlock(log);
 			
@@ -151,9 +154,16 @@ public class ChopAction {
 		if (player.getGameMode() == GameMode.CREATIVE && !Config.get().doCreativeReplant()
 				|| !tree.doReplant()) return;
 		
-		TreeReplanter replanter = new TreeReplanter(tree, baseBlocks);
-		
-		Bukkit.getScheduler().scheduleSyncDelayedTask(QwickTree.get(), replanter);
+		if (tree.getReplantTimer() > 0) {
+			DelayedReplanter replanter = new DelayedReplanter(droppedSaplings, tree, baseBlocks);
+			
+			Bukkit.getScheduler().scheduleSyncDelayedTask(QwickTree.get(), replanter, tree.getReplantTimer());
+		}
+		else {
+			TreeReplanter replanter = new TreeReplanter(tree, baseBlocks);
+			
+			Bukkit.getScheduler().scheduleSyncDelayedTask(QwickTree.get(), replanter);
+		}
 	}
 	
 	/* ### CHECK ### */
@@ -416,7 +426,13 @@ public class ChopAction {
 	
 	private void dropAt(Location location, ItemStack... items) {
 		for (ItemStack item: items)
-			location.getWorld().dropItemNaturally(location, item);
+			if (tree.isValidSapling(item)) {
+				debugger.setStage("saplings", item.getAmount());
+				debugger.setStage("bases", baseBlocks.size());
+				droppedSaplings = location.getWorld().dropItemNaturally(location, item);
+			}
+			else
+				location.getWorld().dropItemNaturally(location, item);
 	}
 
 	/* ### OTHER ### */

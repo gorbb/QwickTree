@@ -7,8 +7,8 @@ import org.bukkit.Location;
 import uk.co.gorbb.qwicktree.tree.TreeInfo;
 
 public class TreeReplanter implements Runnable {
-	private TreeInfo tree;
-	private List<Location> baseLocations;
+	protected TreeInfo tree;
+	protected List<Location> baseLocations;
 	
 	public TreeReplanter(TreeInfo tree, List<Location> baseLocations) {
 		this.tree = tree;

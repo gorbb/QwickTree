@@ -8,6 +8,7 @@ import org.bukkit.TreeSpecies;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.material.Sapling;
 import org.bukkit.material.Wood;
 
@@ -18,8 +19,8 @@ public class StandardTree extends TreeInfo {
 	private TreeSpecies species;
 	
 	public StandardTree(TreeSpecies species, boolean enabled, boolean replant, boolean autoCollect, boolean stump, boolean anyBlock, int leafReach, int leafGroundOffset, int leafMin,
-						int logMin, int logMax, List<String> drops, DamageType damageType, int damageAmount) {
-		super(TreeType.getFromSpecies(species), enabled, replant, autoCollect, stump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount);
+						int logMin, int logMax, List<String> drops, DamageType damageType, int damageAmount, int replantTimer) {
+		super(TreeType.getFromSpecies(species), enabled, replant, autoCollect, stump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount, replantTimer);
 		
 		this.species = species;
 	}
@@ -43,10 +44,19 @@ public class StandardTree extends TreeInfo {
 		return checkSpecies(Material.SAPLING, block.getState());
 	}
 	
+	@Override
+	public boolean isValidSapling(ItemStack item) {
+		return checkSpecies(Material.SAPLING, item.getType(), item.getData());
+	}
+	
 	private boolean checkSpecies(Material material, BlockState state) {
-		if (state.getType() != material) return false;
+		return checkSpecies(material, state.getType(), state.getData());
+	}
+	
+	private boolean checkSpecies(Material material, Material type, MaterialData data) {
+		if (type != material) return false;
 		
-		Wood wood = (Wood) state.getData();
+		Wood wood = (Wood) data;
 		
 		return wood.getSpecies() == species;
 	}

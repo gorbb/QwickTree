@@ -54,7 +54,7 @@ public enum Message {
 	TOGGLE_LIST_ITEM(" &b> &8{0}"),
 	TOGGLE_CLEARED("&2Cleared the disabled list."),
 	
-	;
+	CUSTOM("{0}");
 	
 	private static Logger log = QwickTree.get().getLogger();
 	

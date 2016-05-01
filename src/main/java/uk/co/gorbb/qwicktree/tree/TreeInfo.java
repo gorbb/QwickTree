@@ -31,13 +31,14 @@ public abstract class TreeInfo {
 	private HashMap<Double, Material>	drops;				//Which items to drop when the tree is chopped.
 	
 	private DamageType					damageType;			//Which type of damage to deal to a damagable item when the tree is chopped.
-	private int							damageAmount;		//The multiplier or amount of damage to deal, depending on the damage type.
+	private int							damageAmount,		//The multiplier or amount of damage to deal, depending on the damage type.
+										replantTimer;		//Time (in ticks) to replant the tree after chopping it 
 	
 	protected Material 					logMaterial,
 										leafMaterial;
 	
 	public TreeInfo(TreeType treeType, boolean enabled, boolean replant, boolean autoCollect, boolean stump, boolean anyBlock, int leafReach, int leafGroundOffset, int leafMin,
-					int logMin, int logMax, List<String> drops, DamageType damageType, int damageAmount) {
+					int logMin, int logMax, List<String> drops, DamageType damageType, int damageAmount, int replantTimer) {
 		this.treeType = treeType;
 		
 		this.enabled = enabled;
@@ -57,6 +58,7 @@ public abstract class TreeInfo {
 		
 		this.damageType = damageType;
 		this.damageAmount = damageAmount;
+		this.replantTimer = replantTimer;
 		
 		this.logMaterial = treeType.getLogMaterial();
 		this.leafMaterial = treeType.getLeafMaterial();
@@ -147,9 +149,14 @@ public abstract class TreeInfo {
 		return damageAmount;
 	}
 	
+	public int getReplantTimer() {
+		return replantTimer;
+	}
+	
 	public abstract boolean isValidLog(Block block);
 	public abstract boolean isValidLeaf(Block block);
 	public abstract boolean isValidSapling(Block block);
+	public abstract boolean isValidSapling(ItemStack item);
 	
 	public abstract boolean isValidStandingBlock(Block block);
 	
