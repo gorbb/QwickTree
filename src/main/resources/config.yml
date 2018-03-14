@@ -5,8 +5,25 @@ items:
  - DIAMOND_AXE
 house:
  - GLASS
+ - STAINED_GLASS
  - THIN_GLASS
+ - STAINED_GLASS_PANE
+ - FENCE
+ - NETHER_FENCE
+ - SPRUCE_FENCE
+ - BIRCH_FENCE
+ - DARK_OAK_FENCE
+ - ACACIA_FENCE
+ - JUNGLE_FENCE
+ - FENCE_GATE
+ - SPRUCE_FENCE_GATE
+ - BIRCH_FENCE_GATE
+ - DARK_OAK_FENCE_GATE
+ - ACACIA_FENCE_GATE
+ - JUNGLE_FENCE_GATE
  - IRON_FENCE
+ - TRAP_DOOR
+ - IRON_TRAPDOOR
  - WOODEN_DOOR
  - IRON_DOOR_BLOCK
  - SPRUCE_DOOR
@@ -14,11 +31,18 @@ house:
  - JUNGLE_DOOR
  - ACACIA_DOOR
  - DARK_OAK_DOOR
+ - CARPET
 
 allowSelfToggle: false
 usePerms: true
 groupDrops: true
 maxVines: 20
+
+treeProtection:
+ enabled: true
+ message:
+  console: true
+  chat: false
 
 creative:
  autoCollect: true
@@ -148,3 +172,5 @@ trees:
   damage:
    type: NORM
    amount: 1
+
+version: 2

@@ -13,6 +13,8 @@ public enum Message {
 	EXTERNAL_PLUGIN_ENABLED("Plugin {0} was found."),
 	EXTERNAL_PLUGIN_DISABLED("Plugin {0} wasn't found. Additional features requiring this plugin may be disabled."),
 	
+	CONFIG_UPDATE("Config version mismatch. Config file has been replaced by updated config. See config.yml.old for previous values"),
+	
 	MATERIAL_CONVERT_ERROR("Cannot convert '{0}' to material, ignoring..."),
 	CHANCE_CONVERT_ERROR("Error converting {0} to a double. Ignoring entry {1}..."),
 	INVALID_DAMAGE_TYPE("Invalid damage type for tree type {0}. Expected one of NONE, NORM, FIXED, MULT, but got {1}. Ignoring tree type..."),
@@ -86,7 +88,11 @@ public enum Message {
 	}
 	
 	public boolean send(Permission permission, String... replace) {
-		Bukkit.broadcast(prepare(replace), permission.getName());
+		String message = prepare(replace);
+		
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (player.hasPermission(permission.getName()))
+				player.sendMessage(message);
 		
 		return true;
 	}

@@ -16,12 +16,12 @@
 	</properties>
 	
 	<scm>
-		<url>https://bitbucket.org/adaniels4/qwicktree</url>
+		<url>https://github.com/gorbb/QwickTree</url>
 	</scm>
 	
 	<issueManagement>
-		<system>BukkitDev Ticket System</system>
-		<url>http://dev.bukkit.org/bukkit-plugins/qwicktree/tickets/</url>
+		<system>GitHub</system>
+		<url>https://github.com/gorbb/QwickTree/issues</url>
 	</issueManagement>
 	
 	<repositories>
@@ -43,19 +43,19 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.9.2-R0.1-SNAPSHOT</version>
+			<version>1.12.2-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.9.2-R0.1-SNAPSHOT</version>
+			<version>1.12.2-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.coreprotect</groupId>
 			<artifactId>coreprotect</artifactId>
 			<version>2.12.0</version>
 		</dependency>
-		<dependency>
+ 		<dependency>
 			<groupId>org.mcstats.bukkit</groupId>
 			<artifactId>metrics</artifactId>
 			<version>R8-SNAPSHOT</version>
@@ -106,7 +106,7 @@
 		
 		<finalName>QwickTree</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<directory>${basedir}/Export/${version}/</directory>
+		<directory>${basedir}/Export/${project.version}/</directory>
 		<resources>
 			<resource>
 				<targetPath>.</targetPath>

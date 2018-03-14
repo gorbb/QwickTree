@@ -1,5 +1,6 @@
 package uk.co.gorbb.qwicktree.config;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +18,8 @@ import uk.co.gorbb.qwicktree.util.Message;
 import uk.co.gorbb.qwicktree.util.Permission;
 
 public class Config {
+	private static final int CURRENT_VERSION = 2;
+	
 	private static Config instance;
 	
 	public static Config get() {
@@ -37,20 +40,56 @@ public class Config {
 					groupDrops,
 					creativeAutoCollect,
 					creativeReplant,
-					creativeDamage;
+					creativeDamage,
+					treeProtectionEnabled,
+					treeProtectionChat,
+					treeProtectionConsole;
 	
 	private int maxVines;
 	
 	private Config() {
-		config = QwickTree.get().getConfig();
 		QwickTree.get().saveDefaultConfig();
+		config = QwickTree.get().getConfig();
 		
 		trees = new LinkedList<TreeInfo>();
 	}
 	
+	public void update() {
+		int fileVersion = config.getInt("version", -1);
+		
+		if (fileVersion == CURRENT_VERSION)
+			return;
+		
+		//Move the file and create a new one
+		File folder = QwickTree.get().getDataFolder();
+		
+		File configFile = new File(folder, "config.yml");
+		File newFile = new File(folder, "config.yml-old");
+		
+		//Remove any 'old' old version
+		if (newFile.exists())
+			newFile.delete();
+		
+		configFile.renameTo(newFile);
+		
+		//If the file still exists, remove it else saveDefault won't work
+		if (configFile.exists())
+			configFile.delete();
+		
+		QwickTree.get().saveDefaultConfig();
+		
+		Message.CONFIG_UPDATE.info();
+	}
+	
 	public void load() {
+		config = QwickTree.get().getConfig();
+		
 		houseBlock = toMaterialList(config.getStringList("house"));
 		handItems = toMaterialList(config.getStringList("items"));
+		
+		treeProtectionEnabled = config.getBoolean("treeProtection.enabled");
+		treeProtectionChat = config.getBoolean("treeProtection.message.chat");
+		treeProtectionConsole = config.getBoolean("treeProtection.message.console");
 		
 		usePerms = config.getBoolean("usePerms");
 		if (usePerms)	Permission.USE.setDefault(false);
@@ -165,5 +204,17 @@ public class Config {
 	
 	public int getMaxVines() {
 		return maxVines;
+	}
+	
+	public boolean isTreeProtectionEnabled() {
+		return treeProtectionEnabled;
+	}
+	
+	public boolean useTreeProtectionChat() {
+		return treeProtectionChat;
+	}
+	
+	public boolean useTreeProtectionConsole() {
+		return treeProtectionConsole;
 	}
 }

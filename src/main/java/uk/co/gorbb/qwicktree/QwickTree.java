@@ -29,6 +29,7 @@ public class QwickTree extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
+		Config.get().update();
 		Config.get().load();
 		
 		getServer().getPluginManager().registerEvents(new QTListener(), this);

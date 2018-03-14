@@ -222,17 +222,28 @@ public class ChopAction {
 	}
 	
 	private boolean houseBlockSearch(Block log) {
+		//Don't bother if tree protection is disabled
+		if (!Config.get().isTreeProtectionEnabled())
+			return true;
+		
 		for (int x = -2; x <= 2; x++)
 			for (int z = -2; z <= 2; z++)
 				for (int y = -1; y <= 1; y++) {
 					Block current = log.getRelative(x,  y,  z);
 					
-					// Check for house block
+					//Check for house block
 					if (!ignoreHouseBlocks && Config.get().isHouseBlock(current))
 						if (HouseIgnore.get().ignoreHouseBlocks(player))
 							ignoreHouseBlocks = true;
 						else {
-							Message.NOTIFY.send(Permission.NOTIFY, player.getName(), formatLocation(current));
+							//Check whether to log to console
+							if (Config.get().useTreeProtectionConsole())
+								Message.NOTIFY.info(player.getName(), formatLocation(current));
+							
+							//Check whether to send in chat
+							if (Config.get().useTreeProtectionChat())
+								Message.NOTIFY.send(Permission.NOTIFY, player.getName(), formatLocation(current));
+							
 							return false;
 						}
 				}
