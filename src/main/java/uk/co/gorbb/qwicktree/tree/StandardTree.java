@@ -49,6 +49,11 @@ public class StandardTree extends TreeInfo {
 		return checkSpecies(Material.SAPLING, item.getType(), item.getData());
 	}
 	
+	@Override
+	public boolean isValidSapling(Material material) {
+		return Material.SAPLING.equals(material);
+	}
+	
 	private boolean checkSpecies(Material material, BlockState state) {
 		return checkSpecies(material, state.getType(), state.getData());
 	}

@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
 import java.util.Stack;
+import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -16,7 +18,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -42,7 +43,9 @@ public class ChopAction {
 						leaves,
 						vines;
 	
-	private Item		droppedSaplings;
+	private boolean 	doReplant;
+	private int 		totalToReplant,
+						leftToTake;
 	
 	private Random rnd;
 	
@@ -103,6 +106,9 @@ public class ChopAction {
 		if (!checkSize()) return false;
 
 		debugger.addStage("CA.check"); //4
+		
+		checkReplant();
+		
 		return true;
 	}
 	
@@ -150,19 +156,48 @@ public class ChopAction {
 	}
 	
 	private void replant() {
-		//Check if the tree should be replanted, or not..
-		if (player.getGameMode() == GameMode.CREATIVE && !Config.get().doCreativeReplant()
-				|| !tree.doReplant()) return;
+		if (!doReplant)
+			return;
 		
-		if (tree.getReplantTimer() > 0) {
-			DelayedReplanter replanter = new DelayedReplanter(droppedSaplings, tree, baseBlocks);
-			
+		//If there are any saplings left to take, we'll need to look in the player's inventory
+		if (leftToTake > 0)
+			takeSaplingsFromInventory();
+		
+		
+		int toReplant = totalToReplant - leftToTake;
+		
+		debugger.setStage("Saplings Taken", toReplant);
+		debugger.setStage("Saplings Remain", leftToTake);
+		
+		if (player.getGameMode() == GameMode.CREATIVE)
+			toReplant = totalToReplant;
+		
+		TreeReplanter replanter = new TreeReplanter(tree, baseBlocks, toReplant);
+		
+		if (tree.getReplantTimer() > 0)
 			Bukkit.getScheduler().scheduleSyncDelayedTask(QwickTree.get(), replanter, tree.getReplantTimer());
-		}
-		else {
-			TreeReplanter replanter = new TreeReplanter(tree, baseBlocks);
-			
+		else
 			Bukkit.getScheduler().scheduleSyncDelayedTask(QwickTree.get(), replanter);
+	}
+	
+	private void takeSaplingsFromInventory() {
+		ListIterator<ItemStack> iterator = player.getInventory().iterator();
+		
+		while (iterator.hasNext()) {
+			ItemStack item = iterator.next();
+			
+			if (item == null)
+				continue;
+			
+			if (tree.isValidSapling(item)) {
+				int toRemove = Math.min(item.getAmount(), leftToTake);
+				
+				item.setAmount(item.getAmount() - toRemove);
+				leftToTake -= toRemove;
+				
+				if (leftToTake <= 0)
+					break;
+			}
 		}
 	}
 	
@@ -294,6 +329,18 @@ public class ChopAction {
 		return true;
 	}
 	
+	private void checkReplant() {
+		doReplant = tree.doReplant();
+		
+		if (player.getGameMode() == GameMode.CREATIVE && !Config.get().doCreativeReplant())
+			doReplant = false;
+		
+		totalToReplant = baseBlocks.size();
+		leftToTake = totalToReplant;
+		
+		debugger.setStage("Base Blocks", leftToTake);
+	}
+	
 	/* ### DAMAGE ### */
 	private boolean doDamage() {
 		//If player is creative and shouldn't do damage, then return
@@ -415,6 +462,12 @@ public class ChopAction {
 			Material drop = getRandomDrop();
 			if (drop == null) continue;
 			
+			//Check here for replants and take if needed
+			if (player.getGameMode() != GameMode.CREATIVE && doReplant && leftToTake > 0 && tree.isValidSapling(drop)) {
+				leftToTake--;
+				continue;
+			}
+			
 			drops.put(leaf.getLocation(), tree.processItem(drop, 1));
 		}
 		
@@ -422,7 +475,7 @@ public class ChopAction {
 	}
 	
 	private Material getRandomDrop() {
-		HashMap<Double, Material> dropChances = tree.getDrops();
+		TreeMap<Double, Material> dropChances = tree.getDrops();
 		double number = rnd.nextDouble();
 		Material selected = null;
 		
@@ -440,7 +493,6 @@ public class ChopAction {
 			if (tree.isValidSapling(item)) {
 				debugger.setStage("saplings", item.getAmount());
 				debugger.setStage("bases", baseBlocks.size());
-				droppedSaplings = location.getWorld().dropItemNaturally(location, item);
 			}
 			else
 				location.getWorld().dropItemNaturally(location, item);

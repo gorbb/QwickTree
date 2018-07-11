@@ -42,7 +42,7 @@ public class NewTree extends StandardTree {
 	public boolean isValidSapling(Block block) {
 		return saplingBlock.matches(block);
 	}
-
+	
 	@Override
 	public boolean isValidStandingBlock(Block block) {
 		switch (block.getType()) {

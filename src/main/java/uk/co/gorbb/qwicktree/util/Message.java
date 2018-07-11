@@ -15,6 +15,7 @@ public enum Message {
 	
 	CONFIG_UPDATE("Config version mismatch. Config file has been replaced by updated config. See config.yml.old for previous values"),
 	
+	CHANCE_SCALING("Total drop chance for tree type {0} is above 1, scaling down by {1}"),
 	MATERIAL_CONVERT_ERROR("Cannot convert '{0}' to material, ignoring..."),
 	CHANCE_CONVERT_ERROR("Error converting {0} to a double. Ignoring entry {1}..."),
 	INVALID_DAMAGE_TYPE("Invalid damage type for tree type {0}. Expected one of NONE, NORM, FIXED, MULT, but got {1}. Ignoring tree type..."),

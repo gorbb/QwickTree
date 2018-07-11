@@ -9,15 +9,26 @@ import uk.co.gorbb.qwicktree.tree.TreeInfo;
 public class TreeReplanter implements Runnable {
 	protected TreeInfo tree;
 	protected List<Location> baseLocations;
+	protected int toReplant;
 	
-	public TreeReplanter(TreeInfo tree, List<Location> baseLocations) {
+	public TreeReplanter(TreeInfo tree, List<Location> baseLocations, int toReplant) {
 		this.tree = tree;
 		this.baseLocations = baseLocations;
+		this.toReplant = toReplant;
 	}
 	
 	public void run() {
-		for (Location location: baseLocations)
+		//Don't bother if there's nothing left..
+		if (toReplant <= 0)
+			return;
+		
+		for (Location location: baseLocations) {
 			tree.replantSapling(location);
+			
+			toReplant--;
+			if (toReplant <= 0)
+				break;
+		}
 	}
 	
 }

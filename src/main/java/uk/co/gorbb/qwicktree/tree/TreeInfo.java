@@ -1,7 +1,7 @@
 package uk.co.gorbb.qwicktree.tree;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,7 +28,7 @@ public abstract class TreeInfo {
 	private int							logMin,				//Minimum number of logs required for the tree to be valid.
 										logMax;				//Maximum number of logs allowed in a valid tree. If any more logs are found, the tree is not valid.
 	
-	private HashMap<Double, Material>	drops;				//Which items to drop when the tree is chopped.
+	private TreeMap<Double, Material>	drops;				//Which items to drop when the tree is chopped.
 	
 	private DamageType					damageType;			//Which type of damage to deal to a damagable item when the tree is chopped.
 	private int							damageAmount,		//The multiplier or amount of damage to deal, depending on the damage type.
@@ -64,9 +64,21 @@ public abstract class TreeInfo {
 		this.leafMaterial = treeType.getLeafMaterial();
 	}
 	
-	private HashMap<Double, Material> processDrops(List<String> drops) {
-		HashMap<Double, Material> newDrops = new HashMap<Double, Material>();
+	private TreeMap<Double, Material> processDrops(List<String> drops) {
+		TreeMap<Double, Material> newDrops = new TreeMap<Double, Material>();
 		double chance = 0;
+		double scale = 1;
+		
+		//First, scan through the list and figure out if it needs scaling
+		for (String row: drops)
+			try { chance += Double.parseDouble(row.split(",")[1]); } catch (NumberFormatException e) {}//Silently fail
+		
+		//If the total chance count is higher than 1, then it all needs scaling down so it only adds up to 1
+		if (chance > 1) {
+			scale /= chance;
+			Message.CHANCE_SCALING.warn(treeType.toString(), String.valueOf(scale));
+		}
+		chance = 0;
 		
 		for (String row: drops) {
 			String[] data = row.split(",");
@@ -79,7 +91,7 @@ public abstract class TreeInfo {
 			}
 			
 			try {
-				chance += Double.parseDouble(data[1]);
+				chance += (Double.parseDouble(data[1]) * scale);
 			}
 			catch (NumberFormatException e) {
 				Message.CHANCE_CONVERT_ERROR.warn(data[1], material.toString());
@@ -88,7 +100,10 @@ public abstract class TreeInfo {
 			
 			newDrops.put(chance, material);
 		}
-		newDrops.put(1.0, null);
+		if (chance < 1.0)
+			newDrops.put(1.0, null);
+		
+		
 		
 		return newDrops;
 	}
@@ -137,7 +152,7 @@ public abstract class TreeInfo {
 		return logMax;
 	}
 	
-	public HashMap<Double, Material> getDrops() {
+	public TreeMap<Double, Material> getDrops() {
 		return drops;
 	}
 	
@@ -157,6 +172,8 @@ public abstract class TreeInfo {
 	public abstract boolean isValidLeaf(Block block);
 	public abstract boolean isValidSapling(Block block);
 	public abstract boolean isValidSapling(ItemStack item);
+	
+	public abstract boolean isValidSapling(Material material);
 	
 	public abstract boolean isValidStandingBlock(Block block);
 	
