@@ -12,7 +12,7 @@ import uk.co.gorbb.qwicktree.tree.info.DamageType;
 import uk.co.gorbb.qwicktree.tree.info.TreeType;
 import uk.co.gorbb.qwicktree.util.Message;
 
-public abstract class TreeInfo {
+public class TreeInfo {
 	private TreeType					treeType;			//Used for internal purposes.
 	
 	private boolean 					enabled,			//Whether or not this tree is enabled.
@@ -33,9 +33,6 @@ public abstract class TreeInfo {
 	private DamageType					damageType;			//Which type of damage to deal to a damagable item when the tree is chopped.
 	private int							damageAmount,		//The multiplier or amount of damage to deal, depending on the damage type.
 										replantTimer;		//Time (in ticks) to replant the tree after chopping it 
-	
-	protected Material 					logMaterial,
-										leafMaterial;
 	
 	public TreeInfo(TreeType treeType, boolean enabled, boolean replant, boolean autoCollect, boolean stump, boolean anyBlock, int leafReach, int leafGroundOffset, int leafMin,
 					int logMin, int logMax, List<String> drops, DamageType damageType, int damageAmount, int replantTimer) {
@@ -59,9 +56,6 @@ public abstract class TreeInfo {
 		this.damageType = damageType;
 		this.damageAmount = damageAmount;
 		this.replantTimer = replantTimer;
-		
-		this.logMaterial = treeType.getLogMaterial();
-		this.leafMaterial = treeType.getLeafMaterial();
 	}
 	
 	private TreeMap<Double, Material> processDrops(List<String> drops) {
@@ -168,17 +162,43 @@ public abstract class TreeInfo {
 		return replantTimer;
 	}
 	
-	public abstract boolean isValidLog(Block block);
-	public abstract boolean isValidLeaf(Block block);
-	public abstract boolean isValidSapling(Block block);
-	public abstract boolean isValidSapling(ItemStack item);
+	public boolean isValidLog(Block block) {
+		return treeType.matchesLog(block);
+	}
 	
-	public abstract boolean isValidSapling(Material material);
+	public boolean isValidLeaf(Block block) {
+		return treeType.matchesLeaf(block);
+	}
 	
-	public abstract boolean isValidStandingBlock(Block block);
+	public boolean isValidSapling(Block block) {
+		return treeType.matchesSapling(block);
+	}
 	
-	public abstract void replantSapling(Location location);
+	public boolean isValidSapling(Material material) {
+		return treeType.matchesSapling(material);
+	}
 	
-	public abstract ItemStack processItem(Material material, int qty);
-	public abstract ItemStack getLogItem(int qty);
+	public boolean isValidSapling(ItemStack item) {
+		return item != null && isValidSapling(item.getType());
+	}
+	
+	public boolean isValidStandingBlock(Block block) {
+		switch (block.getType()) {
+			case DIRT:
+			case GRASS:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	public void replantSapling(Location location) {
+		Block block = location.getBlock();
+		
+		block.setType(treeType.getSaplingMaterial());
+	}
+	
+	public ItemStack getLogItem(int qty) {
+		return new ItemStack(treeType.getLogMaterial(), qty);
+	}
 }

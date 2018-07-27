@@ -2,6 +2,7 @@ package uk.co.gorbb.qwicktree.tree.info;
 
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
+import org.bukkit.block.Block;
 
 public enum TreeType {
 	OAK("Oak"),
@@ -26,14 +27,12 @@ public enum TreeType {
 	
 	public Material getLogMaterial() {
 		switch (this) {
-			case OAK:
-			case PINE:
-			case BIRCH:
-			case JUNGLE:
-				return Material.LOG;
-			case ACACIA:
-			case DARK_OAK:
-				return Material.LOG_2;
+			case OAK:		return Material.OAK_LOG;
+			case PINE:		return Material.SPRUCE_LOG;
+			case BIRCH:		return Material.BIRCH_LOG;
+			case JUNGLE:	return Material.JUNGLE_LOG;
+			case ACACIA:	return Material.ACACIA_LOG;
+			case DARK_OAK:	return Material.DARK_OAK_LOG;
 			case CUSTOM:
 			default:
 				return null;
@@ -42,18 +41,54 @@ public enum TreeType {
 	
 	public Material getLeafMaterial() {
 		switch (this) {
-			case OAK:
-			case PINE:
-			case BIRCH:
-			case JUNGLE:
-				return Material.LEAVES;
-			case ACACIA:
-			case DARK_OAK:
-				return Material.LEAVES_2;
+			case OAK:		return Material.OAK_LEAVES;
+			case PINE:		return Material.SPRUCE_LEAVES;
+			case BIRCH:		return Material.BIRCH_LEAVES;
+			case JUNGLE:	return Material.JUNGLE_LEAVES;
+			case ACACIA:	return Material.ACACIA_LEAVES;
+			case DARK_OAK:	return Material.DARK_OAK_LEAVES;
 			case CUSTOM:
 			default:
 				return null;
 		}
+	}
+	
+	public Material getSaplingMaterial() {
+		switch (this) {
+			case OAK:		return Material.OAK_SAPLING;
+			case PINE:		return Material.SPRUCE_SAPLING;
+			case BIRCH:		return Material.BIRCH_SAPLING;
+			case JUNGLE:	return Material.JUNGLE_SAPLING;
+			case ACACIA:	return Material.ACACIA_SAPLING;
+			case DARK_OAK:	return Material.DARK_OAK_SAPLING;
+			case CUSTOM:
+			default:
+				return null;
+		}
+	}
+	
+	public boolean matchesLog(Material material) {
+		return getLogMaterial() == material;
+	}
+	
+	public boolean matchesLeaf(Material material) {
+		return getLeafMaterial() == material;
+	}
+	
+	public boolean matchesSapling(Material material) {
+		return getSaplingMaterial() == material;
+	}
+	
+	public boolean matchesLog(Block block) {
+		return block != null && matchesLog(block.getType());
+	}
+	
+	public boolean matchesLeaf(Block block) {
+		return block != null && matchesLeaf(block.getType());
+	}
+	
+	public boolean matchesSapling(Block block) {
+		return block != null && matchesSapling(block.getType());
 	}
 	
 	public static TreeType getFromSpecies(TreeSpecies species) {

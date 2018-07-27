@@ -50,6 +50,8 @@ public class QwickTree extends JavaPlugin {
 		//Save data
 		HouseIgnore.get().save();
 		DisabledList.get().save();
+		
+		getServer().getScheduler().cancelTasks(this);
 	}
 	
 	public void addTreeChop(TreeType type) {

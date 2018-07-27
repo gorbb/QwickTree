@@ -438,7 +438,7 @@ public class ChopAction {
 		}
 		
 		//Add the logs, since everything here is being combined...
-		combinedDrops.put(Material.LOG, logs.size());
+		combinedDrops.put(tree.getType().getLogMaterial(), logs.size());
 		
 		//And then the vines if there are any.
 		if (vines.size() > 0)
@@ -448,7 +448,7 @@ public class ChopAction {
 		List<ItemStack> combinedList = new ArrayList<ItemStack>(combinedDrops.size());
 		
 		for (Material material: combinedDrops.keySet())
-			combinedList.add(tree.processItem(material, combinedDrops.get(material)));
+			combinedList.add(new ItemStack(material, combinedDrops.get(material)));
 		
 		return combinedList.toArray(new ItemStack[combinedList.size()]);
 	}
@@ -468,7 +468,7 @@ public class ChopAction {
 				continue;
 			}
 			
-			drops.put(leaf.getLocation(), tree.processItem(drop, 1));
+			drops.put(leaf.getLocation(), new ItemStack(drop, 1));
 		}
 		
 		return drops;
@@ -509,7 +509,7 @@ public class ChopAction {
 		
 		
 		if (type == TreeType.OAK)
-			if (biome == Biome.SWAMPLAND || biome == Biome.MUTATED_SWAMPLAND)
+			if (biome == Biome.SWAMP || biome == Biome.SWAMP_HILLS)
 				baseLeafReach += 1;		//Oak in swamp, increase by 1
 			else if (size >= 15)
 				baseLeafReach += 1;		//Large oak elsewhere, increase by 1

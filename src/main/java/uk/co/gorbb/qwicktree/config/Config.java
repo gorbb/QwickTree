@@ -11,14 +11,14 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.inventory.ItemStack;
 
 import uk.co.gorbb.qwicktree.QwickTree;
-import uk.co.gorbb.qwicktree.tree.StandardTree;
 import uk.co.gorbb.qwicktree.tree.TreeInfo;
 import uk.co.gorbb.qwicktree.tree.info.DamageType;
+import uk.co.gorbb.qwicktree.tree.info.TreeType;
 import uk.co.gorbb.qwicktree.util.Message;
 import uk.co.gorbb.qwicktree.util.Permission;
 
 public class Config {
-	private static final int CURRENT_VERSION = 2;
+	private static final int CURRENT_VERSION = 3;
 	
 	private static Config instance;
 	
@@ -144,7 +144,7 @@ public class Config {
 		int damageAmount = config.getInt(tag + "damage.amount");
 		int replantTimer = config.getInt(tag + "replantTimer");
 		
-		return new StandardTree(species, enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount, replantTimer);
+		return new TreeInfo(TreeType.getFromSpecies(species), enabled, replant, autoCollect, allowStump, anyBlock, leafReach, leafGroundOffset, leafMin, logMin, logMax, drops, damageType, damageAmount, replantTimer);
 	}
 	
 	private List<Material> toMaterialList(List<String> list) {
